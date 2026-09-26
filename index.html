@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>AI Workflow Portfolio</title>
 <style>
-@font-face{font-family:"Noto Sans JP";src:url("assets/20260923_notosansjp.woff2") format("woff2");font-weight:100 900;font-display:swap}
-@font-face{font-family:"Inter";src:url("assets/20260923_inter.woff2") format("woff2");font-weight:100 900;font-display:swap}
+@font-face{font-family:"Noto Sans JP";src:url("assets/notosansjp.woff2") format("woff2");font-weight:100 900;font-display:swap}
+@font-face{font-family:"Inter";src:url("assets/inter.woff2") format("woff2");font-weight:100 900;font-display:swap}
 :root{
   --bg:#FFFFFF;
   --bg-2:#F3F5F8;
@@ -88,7 +88,7 @@ section.block{padding-block:clamp(64px,8vw,112px)}
 .chip:active{background:var(--primary-soft)}
 .chip[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:var(--primary-ink);font-weight:700}
 .chip[aria-pressed="true"]::before{content:"✓";margin-right:var(--sp-2)}
-.works{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sp-5)}
+.works{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-5)}
 .work{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column}
 .work[hidden]{display:none}
 .cover{position:relative;aspect-ratio:16/10;background:var(--bg-2);display:grid;place-items:center}
@@ -132,7 +132,7 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:var(-
 
       <div class="works">
         <article class="work" data-cat="app">
-          <div class="cover"><img src="assets/20260923_skincare_cover.webp" alt="肌管理アプリの画面。カレンダー、グラフ、記録の3画面" width="1200" height="750" loading="lazy"><span class="tag">WEB APP</span></div>
+          <div class="cover"><img src="assets/skincare_cover.webp" alt="肌管理アプリの画面。カレンダー、グラフ、記録の3画面" width="1200" height="750" loading="lazy"><span class="tag">WEB APP</span></div>
           <div class="work-body">
             <h3><span class="ph">肌の記録と</span><span class="ph">振り返りアプリ</span></h3>
             <p>肌の調子・スキンケア・睡眠・食事を毎日記録し、どんな日に肌の調子がよかったかをグラフで振り返れるWebアプリです。自分用に企画から開発まで行いました。画面は架空のデータで表示しています。</p>
@@ -141,12 +141,21 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:var(-
           </div>
         </article>
         <article class="work" data-cat="app">
-          <div class="cover"><img src="assets/20260923_style-note_cover.webp" alt="ビューティーアドバイザーアプリの画面。早見表、メイク手順、AIに聞いた結果の3画面" width="1200" height="750" loading="lazy"><span class="tag">WEB APP</span></div>
+          <div class="cover"><img src="assets/style-note_cover.webp" alt="ビューティーアドバイザーアプリの画面。早見表、メイク手順、AIに聞いた結果の3画面" width="1200" height="750" loading="lazy"><span class="tag">WEB APP</span></div>
           <div class="work-body">
             <h3><span class="ph">服とメイクを選ぶ</span><span class="ph">ビューティー</span><span class="ph">アドバイザーアプリ</span></h3>
             <p>パーソナルカラー・骨格・顔タイプの診断結果を、毎日の服とメイク選びに使うためのWebアプリです。写真を撮って AI に聞くと、似合うかどうかと合わせ方がわかります。自分用に企画から開発まで行いました。画面は架空のデータで表示しています。</p>
             <dl><dt>使用技術</dt><dd>HTML・CSS・JavaScript／Claude API（AIの判定）</dd><dt>担当</dt><dd>企画・設計・開発・テスト</dd><dt>納品物</dt><dd>Webアプリ一式・使い方の手順書（設計書・動作確認の記録つき）</dd></dl>
             <a class="more" href="cases/style-note.html">事例を見る</a>
+          </div>
+        </article>
+        <article class="work" data-cat="app">
+          <div class="cover"><img src="assets/baby-care_cover.webp" alt="運営管理システムのダッシュボード。4つの数、業務の流れと役割分担の表、これからの案件と今日のタスク" width="1200" height="750" loading="lazy"><span class="tag">WEB APP</span></div>
+          <div class="work-body">
+            <h3><span class="ph">イベント託児の</span><span class="ph">運営管理システム</span></h3>
+            <p>問い合わせ・申込・スタッフの手配・常設託児室のシフト・実績・請求の準備までを、1つの流れで管理する業務Webアプリです。AIは整理と下書き、最終確認と判断は人が行う役割分担にしています。ポートフォリオ用の架空の案件で、画面は架空のデータで表示しています。</p>
+            <dl><dt>使用技術</dt><dd>HTML・CSS・JavaScript／サーバー版の設計: Java・PostgreSQL・Claude API</dd><dt>担当</dt><dd>企画・設計・開発</dd><dt>納品物</dt><dd>Webアプリ一式・使い方マニュアル（PDF）（設計書・動作確認の記録つき）</dd></dl>
+            <a class="more" href="cases/baby-care.html">事例を見る</a>
           </div>
         </article>
       </div>
