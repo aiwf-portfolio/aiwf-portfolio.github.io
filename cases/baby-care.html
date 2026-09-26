@@ -39,6 +39,7 @@
   --sp-5:24px;
   --sp-6:32px;
   --sp-7:48px;
+  --sp-8:72px;
   --radius:4px;
   --max:1120px;
 }
@@ -87,14 +88,14 @@ section.block h2{font-size:var(--fs-h2-sub);line-height:1.5;margin-top:var(--sp-
 .problem{max-width:40em}
 .problem p{margin:0 0 var(--sp-3)}
 .problem p.goal{font-weight:700;color:var(--ink)}
-.features{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-7) var(--sp-6);margin:0;padding:0;list-style:none}
+.features{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-8) var(--sp-7);margin:0;padding:0;list-style:none}
 .features figure{margin:0}
 .features img{display:block;width:100%;height:auto;max-width:280px;margin:0 auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg-2)}
-.features figcaption{margin-top:var(--sp-4)}
+.features figcaption{margin-top:var(--sp-5)}
 .features h3{font-size:var(--fs-h3);line-height:1.5}
-.features p{margin:var(--sp-2) 0 0;color:var(--ink-2)}
-@media (max-width:760px){.features{grid-template-columns:1fr;gap:var(--sp-7)}}
-.features + .note{margin-top:var(--sp-6)}
+.features p{margin:var(--sp-3) 0 0;color:var(--ink-2)}
+@media (max-width:760px){.features{grid-template-columns:1fr;gap:var(--sp-8)}}
+.features + .note{margin-top:var(--sp-7)}
 .steps{margin:0;padding:0;list-style:none;border-top:1px solid var(--line)}
 .steps li{display:grid;grid-template-columns:minmax(0,18em) minmax(0,1fr);gap:var(--sp-1) var(--sp-5);padding:var(--sp-4) 0;border-bottom:1px solid var(--line)}
 .steps b{font-weight:700}
@@ -175,13 +176,11 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:var(-
     <section class="block">
       <div class="label"><span class="num">04</span>Process</div>
       <h2>進め方</h2>
-      <p class="note" style="margin:0 0 var(--sp-4)">どのアプリも、次の5つの観点で整理して作っています。</p>
+      <p class="note" style="margin:0 0 var(--sp-4)">次の3つの観点で整理して作っています。</p>
       <ol class="steps">
         <li><div><b>目的から決める</b><p class="how">だれが・いつ・何のために使うかを先に決め、「どうなれば完成か」を1つずつ言葉にする</p></div><p>「問い合わせから実績までが1つにつながる」を目的に、機能ごとに「どうなれば完成か」を決めました（例: スタッフ候補には、曜日と時間が合い、同じ時間に別の案件がない人だけが出る）。</p></li>
         <li><div><b>続けられる使いやすさ</b><p class="how">文字の大きさ・色の濃さ・押しやすさを、決めた基準で確かめる</p></div><p>事務所の PC で1日開いておく前提で、今日やることを最初の画面に集めました。スマホでは、表を1件ずつのカードに切り替えます。</p></li>
-        <li><div><b>データの安全</b><p class="how">どのデータをどこへ送ってよいかを先に表で決め、公的なガイドラインをもとに確かめる</p></div><p>どのデータをどこへ送ってよいかを表で決め、AIへ送る情報は用途ごとに絞りました。入力やAIの文は、文字としてだけ表示します。</p></li>
-        <li><div><b>壊さない・失わない</b><p class="how">直すたびに、実際に動かして確かめる</p></div><p>期限・スタッフ候補・知らせの計算を画面と分け、自動のテストで確かめています。</p></li>
-        <li><div><b>使いながら育てる</b><p class="how">実際に使い、気づいた所を直す</p></div><p>サンプルのデータで業務の流れを通しで動かし、気づいた所を直しました（例: スタッフへの返事の期限が、開催日の当日にならないようにした。募集文と照らして足りない業務を洗い出し、シフト表・申込フォーム・請求準備を足した）。</p></li>
+        <li><div><b>データの安全</b><p class="how">どのデータをどこへ送ってよいかを先に表で決め、公的なガイドラインをもとに確かめる</p></div><p>サーバーは、ログインした人だけが使え、管理者と運営担当で権限を分ける設計にしました。AIのAPIキーはサーバーにだけ置き、ブラウザには渡しません。AIへ送る情報は、用途ごとに絞ります。IPA・OWASP の項目との対応表で、抜けがないか確かめています。</p></li>
       </ol>
           </section>
 
@@ -203,10 +202,10 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:var(-
     <section class="block">
       <div class="label"><span class="num">06</span>Deliverables</div>
       <h2>納品物のイメージ</h2>
-      <dl class="deliver"><div><dt>Webアプリ一式</dt><dd>画面と動きをまとめたファイル一式</dd></div><div><dt>使い方マニュアル（PDF）</dt><dd>運営担当者が、問い合わせの受付から実績の記録まで、画面の写真を見ながら順に進められる資料。毎日の使いかた・困ったときの対処・導入の進め方までを、28ページにまとめています</dd></div></dl>
+      <dl class="deliver"><div><dt>Webアプリ一式</dt><dd>画面のファイル、サーバーのプログラム（Java・Spring Boot）、データベースの定義（PostgreSQL）をまとめてお渡しします。サーバーに置いて公開すると、担当者の方がログインして、同じデータを見ながら使えます</dd></div><div><dt>使い方マニュアル（PDF）</dt><dd>運営担当者が、問い合わせの受付から実績の記録まで、画面の写真を見ながら順に進められる資料。毎日の使いかた・困ったときの対処・導入の進め方までを、28ページにまとめています</dd></div></dl>
       <p class="note">あわせて、次の資料もお付けします。</p>
       <dl class="deliver" style="margin-top:var(--sp-3)"><div><dt>設計書</dt><dd>画面の流れ、保存するデータの形、外とのつながりをまとめた資料。サーバーとデータベースの設計も含みます</dd></div><div><dt>動作確認の記録</dt><dd>何を確かめて、どうだったかの一覧</dd></div></dl>
-      <p class="note">見本は架空の案件のため、一部そろっていない資料もあります。サーバーのプログラムとデータベースは、設計書までで、まだ作っていません。画面写真とデモは、ブラウザだけで動く試作に架空のデータを入れたものです。使い方マニュアルの画面写真も、架空のデータで撮影しています。</p>
+      <p class="note">見本は架空の案件のため、一部そろっていない資料もあります。この見本では、サーバーのプログラムとデータベースは設計書までで、まだ作っていません。画面写真は、この事例ページも使い方マニュアルも、架空のデータで撮影しています。</p>
     </section>
 
     <div class="foot-back"><a class="back" href="../index.html#portfolio">← ポートフォリオへ戻る</a></div>
