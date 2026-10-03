@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'none'; style-src 'unsafe-inline'; font-src 'self'; img-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AIのマネージャーと5つの担当で業務を回す仕組み｜AI Workflow Portfolio</title>
+<style>
+@font-face{font-family:"Noto Sans JP";src:url("../assets/notosansjp.woff2") format("woff2");font-weight:100 900;font-display:swap}
+@font-face{font-family:"Inter";src:url("../assets/inter.woff2") format("woff2");font-weight:100 900;font-display:swap}
+:root{
+  --bg:#FFFFFF;
+  --bg-2:#F3F5F8;
+  --surface:#FFFFFF;
+  --ink:#0F1A2B;
+  --ink-2:#4A5568;
+  --ink-3:#5F6B7E;
+  --line:#E2E6EC;
+  --line-strong:#8591A5;
+  --line-on-deep:rgba(255,255,255,.1);
+  --primary:#1C4E9E;
+  --primary-ink:#FFFFFF;
+  --primary-soft:#E8EEF8;
+  --deep:#0E2240;
+  --on-deep:#E9EEF6;
+  --sans:"Noto Sans JP","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
+  --en:"Inter","Helvetica Neue",Arial,sans-serif;
+  --fs-h2:clamp(24px,3vw,36px);
+  --fs-h2-sub:clamp(20px,2.4vw,28px);
+  --fs-h3:17px;
+  --fs-body:16px;
+  --fs-ui:14px;
+  --fs-label:12px;
+  --sp-1:4px;
+  --sp-2:8px;
+  --sp-3:12px;
+  --sp-4:16px;
+  --sp-5:24px;
+  --sp-6:32px;
+  --sp-7:48px;
+  --radius:4px;
+  --max:1120px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B111B;--bg-2:#111927;--surface:#141D2C;--ink:#E8ECF2;--ink-2:#A9B3C2;--ink-3:#8E99AE;
+    --line:#243044;--line-strong:#6E7D94;--primary:#6C9BE8;--primary-ink:#0B111B;--primary-soft:#172640;--deep:#0F1C31;--on-deep:#E8ECF2;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B111B;--bg-2:#111927;--surface:#141D2C;--ink:#E8ECF2;--ink-2:#A9B3C2;--ink-3:#8E99AE;
+  --line:#243044;--line-strong:#6E7D94;--primary:#6C9BE8;--primary-ink:#0B111B;--primary-soft:#172640;--deep:#0F1C31;--on-deep:#E8ECF2;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:var(--fs-body);line-height:1.85;letter-spacing:.03em;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+a:focus-visible,button:focus-visible{outline:2px solid var(--primary);outline-offset:3px}
+.wrap{max-width:var(--max);margin:0 auto;padding-inline:clamp(16px,4vw,40px)}
+h1,h2,h3{font-weight:700;text-wrap:balance;margin:0;letter-spacing:.04em;font-feature-settings:"palt"}
+.ph{display:inline-block}
+
+.label{display:flex;align-items:center;gap:var(--sp-3);font-family:var(--en);font-size:var(--fs-label);font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--primary)}
+.label::before{content:"";width:24px;height:2px;background:var(--primary)}
+.label .num{color:var(--ink-3);font-variant-numeric:tabular-nums}
+.site-head{position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:1px solid var(--line)}
+.site-head .wrap{display:flex;align-items:center;justify-content:space-between;height:68px;gap:var(--sp-5)}
+.logo{display:flex;align-items:center;gap:var(--sp-3);min-height:44px;font-family:var(--en);font-weight:700;font-size:var(--fs-body);letter-spacing:.06em}
+.logo:active{color:var(--primary)}
+.logo i{width:20px;height:20px;border:2px solid var(--primary);border-radius:3px;background:linear-gradient(var(--primary),var(--primary)) right 2px bottom 2px/8px 8px no-repeat}
+.logo small{font-family:var(--sans);font-size:var(--fs-label);font-weight:500;color:var(--ink-3);letter-spacing:.1em}
+@media (max-width:860px){.logo small{display:none}}
+.back{display:inline-flex;align-items:center;min-height:44px;color:var(--primary);font-size:var(--fs-ui);font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.back:active{color:var(--ink)}
+.intro{padding-block:var(--sp-6) var(--sp-7)}
+.intro h1{font-size:var(--fs-h2);line-height:1.45;margin-top:var(--sp-4)}
+.intro .lead{color:var(--ink-2);margin:var(--sp-4) 0 0;max-width:40em}
+.intro .cover{max-width:880px;margin-top:var(--sp-6);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--bg-2)}
+.intro .cover img{display:block;width:100%;height:auto}
+.meta{margin:var(--sp-5) 0 0;display:grid;grid-template-columns:auto 1fr;gap:var(--sp-2) var(--sp-5);font-size:var(--fs-ui)}
+.meta dt{color:var(--ink-3)}
+.meta dd{margin:0}
+section.block{padding-block:var(--sp-7);border-top:1px solid var(--line)}
+section.block h2{font-size:var(--fs-h2-sub);line-height:1.5;margin-top:var(--sp-3);margin-bottom:var(--sp-5)}
+.problem{max-width:40em}
+.problem p{margin:0 0 var(--sp-3)}
+.problem p.goal{font-weight:700;color:var(--ink)}
+.features{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-5);margin:0;padding:0;list-style:none}
+.features figure{margin:0}
+.features img{display:block;width:100%;height:auto;max-width:280px;margin:0 auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg-2)}
+.features figcaption{margin-top:var(--sp-3)}
+.features h3{font-size:var(--fs-h3);line-height:1.5}
+.features p{margin:var(--sp-1) 0 0;color:var(--ink-2)}
+@media (max-width:760px){.features{grid-template-columns:1fr;gap:var(--sp-6)}}
+.steps{margin:0;padding:0;list-style:none;border-top:1px solid var(--line)}
+.steps li{display:grid;grid-template-columns:minmax(0,18em) minmax(0,1fr);gap:var(--sp-1) var(--sp-5);padding:var(--sp-4) 0;border-bottom:1px solid var(--line)}
+.steps b{font-weight:700}
+.steps .how{margin-top:var(--sp-1);font-size:var(--fs-ui);color:var(--ink-3)}
+.steps p{margin:0;color:var(--ink-2);max-width:40em}
+@media (max-width:640px){.steps li{grid-template-columns:1fr}}
+.list{margin:0;padding-left:1.2em;max-width:40em}
+.list li{margin-bottom:var(--sp-2)}
+.list li::marker{color:var(--primary)}
+.note{font-size:var(--fs-ui);color:var(--ink-3);margin-top:var(--sp-4);max-width:40em}
+.deliver{margin:0;max-width:40em;border-top:1px solid var(--line)}
+.deliver div{padding:var(--sp-3) 0;border-bottom:1px solid var(--line)}
+.deliver dt{font-weight:700}
+.deliver dd{margin:var(--sp-1) 0 0;color:var(--ink-2)}
+.problem .voice{margin:0 0 var(--sp-4);padding-left:var(--sp-4);border-left:2px solid var(--primary)}
+.foot-back{padding-block:var(--sp-6) var(--sp-7);border-top:1px solid var(--line)}
+footer{background:var(--deep);color:var(--on-deep);border-top:1px solid var(--line-on-deep)}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:var(--sp-3);padding-block:var(--sp-5);font-family:var(--en);font-size:var(--fs-label);letter-spacing:.08em;opacity:.6}
+</style>
+</head>
+<body>
+<header class="site-head">
+  <div class="wrap">
+    <a class="logo" href="../index.html#portfolio"><i aria-hidden="true"></i>AI Workflow &amp; Content<small>Portfolio</small></a>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="intro">
+      <a class="back" href="../index.html#portfolio">← ポートフォリオへ戻る</a>
+      <div class="label" style="margin-top:var(--sp-5)">Case</div>
+      <h1><span class="ph">AIのマネージャーと</span><span class="ph">5つの担当で</span><span class="ph">業務を回す仕組み</span></h1>
+      <p class="lead">毎朝・毎晩の決まった時刻に、AIのマネージャーが5つの担当（調べもの・営業・コンテンツ・ブログ・制作）に仕事を振り、結果を1枚のレポートにまとめる仕組みです。公開・送信・削除は人が行います。自分の事業のために企画から作り、運用しています。</p>
+      <div class="cover"><img src="../assets/ai-manager_cover.webp" alt="スマホで見たレポートの3画面。今日やったこと、各担当で今日行ったこと、確認・承認が欲しい内容" width="1200" height="750"></div>
+      <dl class="meta"><dt>種類</dt><dd>業務の自動化（AIの担当が決まった時刻に動く仕組み）</dd><dt>担当</dt><dd>企画・設計・運用</dd><dt>使用技術</dt><dd>Claude Code（AIの担当・定期実行）／Googleカレンダー・Gmail 連携（読む・下書きまで）</dd><dt>納品物</dt><dd>設定一式・運用の手順書（日報とレポートのひな形つき）</dd></dl>
+    </div>
+
+    <section class="block">
+      <div class="label"><span class="num">01</span>Problem</div>
+      <h2>困りごと</h2>
+      <div class="problem"><p class="voice">「使える時間は限られている。調べもの・営業・発信・制作とやることが多く、その時間をどこに使うかを、毎日自分で決めるのが大変。」</p><p class="goal">そこで、AIが毎日進み具合を見て仕事を振り、人は確認と判断だけをすればよい形を目指しました。</p></div>
+    </section>
+
+    <section class="block">
+      <div class="label"><span class="num">02</span>Features</div>
+      <h2>作ったもの</h2>
+      <ul class="features">
+        <li><figure><img src="../assets/ai-manager_report.webp" alt="レポートの上の部分。日付、朝会と夕会が済んだ時刻、今日の空き時間、時刻つきの今日やったこと" width="585" height="1266" loading="lazy"><figcaption><h3><span class="ph">朝と夜に</span><span class="ph">1枚のレポート</span></h3><p>毎日7時半と21時に動くように設定しています。予定表の空き時間と、今日やったことを1枚のページにまとめ、1行の通知で知らせます。</p></figcaption></figure></li>
+        <li><figure><img src="../assets/ai-manager_depts.webp" alt="各担当で今日行ったこと。調べもの・営業・コンテンツ・ブログ・制作ごとに、状態の札と2〜3行の報告、制作中のサイトの一覧" width="585" height="1266" loading="lazy"><figcaption><h3><span class="ph">5つの担当が</span><span class="ph">順番に動く</span></h3><p>マネージャーが担当を1人ずつ呼び、曜日ごとの決まった仕事と、頼まれた仕事をしてもらいます。1人が失敗しても、ほかの担当は止まりません。</p></figcaption></figure></li>
+        <li><figure><img src="../assets/ai-manager_ask.webp" alt="確認・承認が欲しい内容。確認待ち3件のうち3件、今日の1つ、番号と選択肢つきの質問3つと返事のしかた" width="585" height="1266" loading="lazy"><figcaption><h3><span class="ph">人の確認は</span><span class="ph">3件までに絞る</span></h3><p>人に確かめてほしいことは、番号と選択肢をつけて3件までにします。3件たまったら、担当は確認の要らない仕事だけをします。返事は「1はOK、3はA」のようにひと言で済みます。</p></figcaption></figure></li>
+      </ul>
+      <p class="note">画面は、架空のデータを入れて撮影しています。</p>
+    </section>
+
+    <section class="block">
+      <div class="label"><span class="num">03</span>Ideas</div>
+      <h2>工夫したこと</h2>
+      <dl class="deliver"><div><dt>AI がしてよいことを表で分ける</dt><dd>「自動でしてよい」「人の OK のあとにする」「自動ではしない」の3つに分け、すべての担当に守らせます。公開・送信・削除は自動ではしません。</dd></div><div><dt>人の窓口は1つ</dt><dd>人はマネージャーにだけ話せば、担当への振り分け・伝言・結果のまとめまで行います。担当ごとに話しかける必要はありません。</dd></div><div><dt>人が動けない日も止まらない</dt><dd>催促はしません。予定表の空き時間が2時間未満の日は、人への頼みごと（今日の1つ）を出しません。確認待ちが3件たまったら、担当は確認の要らない仕事だけを進めます。</dd></div></dl>
+    </section>
+
+    <section class="block">
+      <div class="label"><span class="num">04</span>Process</div>
+      <h2>進め方</h2>
+      <p class="note" style="margin:0 0 var(--sp-4)">どの仕組みも、次の5つの観点で整理して作っています。</p>
+      <ol class="steps">
+        <li><div><b>目的から決める</b><p class="how">だれが・いつ・何のために使うかを先に決め、「どうなれば完成か」を1つずつ言葉にする</p></div><p>「限られた時間を、いちばん効くところに向ける」をマネージャーの役目として最初に決めました。マネージャーは中身を作らず、振り分け・まとめ・進み具合の確認だけをします。</p></li>
+        <li><div><b>続けられる使いやすさ</b><p class="how">使う人が無理なく続けられる分量と読みやすさを、先に決める</p></div><p>報告は1行の通知と1枚のページにまとめ、人への頼みごとは1日1つ・15分の大きさにしています。</p></li>
+        <li><div><b>データの安全</b><p class="how">どのデータをどこへ送ってよいかを先に決め、それ以外には送らない</p></div><p>読んでよい場所・書いてよい場所を表で決め、予定表やメールは「読む」「下書きを作る」までにしています。</p></li>
+        <li><div><b>壊さない・失わない</b><p class="how">直しても崩れない作りにし、前の状態に戻せるようにする</p></div><p>日報など決められたもの以外は、いまあるファイルの書き換え・移動を人の OK のあとにしています。担当の失敗は日報に残し、次の回で続きができるようにしています。</p></li>
+        <li><div><b>使いながら育てる</b><p class="how">実際に使い、気づいた所を直す</p></div><p>2026年9月から運用し、気づいた点で決まりを直しています（例: 予定表の空き時間をレポートに加えました）。</p></li>
+      </ol>
+    </section>
+
+    <section class="block">
+      <div class="label"><span class="num">05</span>Security &amp; Data</div>
+      <h2>安全とデータの扱い</h2>
+      <ul class="list">
+        <li>パソコンの中で動きます。読んではいけないフォルダ（ほかの仕事や私生活の資料）を決め、そこは読まない決まりにしています。</li>
+        <li>予定表は読むだけです。記録するのは空いている時間帯だけで、予定の件名・場所・参加者は書きません。</li>
+        <li>メールは、届いた返事を読んで返信の下書きを作るまでです。送信・削除はしません。</li>
+        <li>公開・投稿・送信・削除と、お金のかかるサービスの利用は、自動ではしません。</li>
+        <li>日報とレポートには、個人の名前や連絡先を書きません。レポートのページは本人だけが開けます。</li>
+      </ul>
+    </section>
+
+    <section class="block">
+      <div class="label"><span class="num">06</span>Deliverables</div>
+      <h2>納品物のイメージ</h2>
+      <dl class="deliver"><div><dt>設定一式</dt><dd>マネージャーと各担当への指示書、毎日の朝会・夕会の設定、日報とレポートのひな形</dd></div><div><dt>運用の手順書</dt><dd>依頼と返事のしかた、AI がしてよいことの表、担当を休ませるときの決まり</dd></div></dl>
+      <p class="note">見本の仕組みは自分の事業用のため、一部そろっていない資料もあります。</p>
+    </section>
+
+    <div class="foot-back"><a class="back" href="../index.html#portfolio">← ポートフォリオへ戻る</a></div>
+  </div>
+</main>
+<footer><div class="wrap"><span>© 2026 AI Workflow &amp; Content</span><span>All rights reserved.</span></div></footer>
+</body>
+</html>

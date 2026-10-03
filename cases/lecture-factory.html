@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'none'; style-src 'unsafe-inline'; font-src 'self'; img-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI講座の講義を自動で作る仕組み｜AI Workflow Portfolio</title>
+<style>
+@font-face{font-family:"Noto Sans JP";src:url("../assets/notosansjp.woff2") format("woff2");font-weight:100 900;font-display:swap}
+@font-face{font-family:"Inter";src:url("../assets/inter.woff2") format("woff2");font-weight:100 900;font-display:swap}
+:root{
+  --bg:#FFFFFF;
+  --bg-2:#F3F5F8;
+  --surface:#FFFFFF;
+  --ink:#0F1A2B;
+  --ink-2:#4A5568;
+  --ink-3:#5F6B7E;
+  --line:#E2E6EC;
+  --line-strong:#8591A5;
+  --line-on-deep:rgba(255,255,255,.1);
+  --primary:#1C4E9E;
+  --primary-ink:#FFFFFF;
+  --primary-soft:#E8EEF8;
+  --deep:#0E2240;
+  --on-deep:#E9EEF6;
+  --sans:"Noto Sans JP","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
+  --en:"Inter","Helvetica Neue",Arial,sans-serif;
+  --fs-h2:clamp(24px,3vw,36px);
+  --fs-h2-sub:clamp(20px,2.4vw,28px);
+  --fs-h3:17px;
+  --fs-body:16px;
+  --fs-ui:14px;
+  --fs-label:12px;
+  --sp-1:4px;
+  --sp-2:8px;
+  --sp-3:12px;
+  --sp-4:16px;
+  --sp-5:24px;
+  --sp-6:32px;
+  --sp-7:48px;
+  --radius:4px;
+  --max:1120px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B111B;--bg-2:#111927;--surface:#141D2C;--ink:#E8ECF2;--ink-2:#A9B3C2;--ink-3:#8E99AE;
+    --line:#243044;--line-strong:#6E7D94;--primary:#6C9BE8;--primary-ink:#0B111B;--primary-soft:#172640;--deep:#0F1C31;--on-deep:#E8ECF2;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B111B;--bg-2:#111927;--surface:#141D2C;--ink:#E8ECF2;--ink-2:#A9B3C2;--ink-3:#8E99AE;
+  --line:#243044;--line-strong:#6E7D94;--primary:#6C9BE8;--primary-ink:#0B111B;--primary-soft:#172640;--deep:#0F1C31;--on-deep:#E8ECF2;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:var(--fs-body);line-height:1.85;letter-spacing:.03em;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+a:focus-visible,button:focus-visible{outline:2px solid var(--primary);outline-offset:3px}
+.wrap{max-width:var(--max);margin:0 auto;padding-inline:clamp(16px,4vw,40px)}
+h1,h2,h3{font-weight:700;text-wrap:balance;margin:0;letter-spacing:.04em;font-feature-settings:"palt"}
+.ph{display:inline-block}
+
+.label{display:flex;align-items:center;gap:var(--sp-3);font-family:var(--en);font-size:var(--fs-label);font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--primary)}
+.label::before{content:"";width:24px;height:2px;background:var(--primary)}
+.label .num{color:var(--ink-3);font-variant-numeric:tabular-nums}
+.site-head{position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:1px solid var(--line)}
+.site-head .wrap{display:flex;align-items:center;justify-content:space-between;height:68px;gap:var(--sp-5)}
+.logo{display:flex;align-items:center;gap:var(--sp-3);min-height:44px;font-family:var(--en);font-weight:700;font-size:var(--fs-body);letter-spacing:.06em}
+.logo:active{color:var(--primary)}
+.logo i{width:20px;height:20px;border:2px solid var(--primary);border-radius:3px;background:linear-gradient(var(--primary),var(--primary)) right 2px bottom 2px/8px 8px no-repeat}
+.logo small{font-family:var(--sans);font-size:var(--fs-label);font-weight:500;color:var(--ink-3);letter-spacing:.1em}
+@media (max-width:860px){.logo small{display:none}}
+.back{display:inline-flex;align-items:center;min-height:44px;color:var(--primary);font-size:var(--fs-ui);font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.back:active{color:var(--ink)}
+.intro{padding-block:var(--sp-6) var(--sp-7)}
+.intro h1{font-size:var(--fs-h2);line-height:1.45;margin-top:var(--sp-4)}
+.intro .lead{color:var(--ink-2);margin:var(--sp-4) 0 0;max-width:40em}
+.intro .cover{max-width:880px;margin-top:var(--sp-6);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--bg-2)}
+.intro .cover img{display:block;width:100%;height:auto}
+.meta{margin:var(--sp-5) 0 0;display:grid;grid-template-columns:auto 1fr;gap:var(--sp-2) var(--sp-5);font-size:var(--fs-ui)}
+.meta dt{color:var(--ink-3)}
+.meta dd{margin:0}
+section.block{padding-block:var(--sp-7);border-top:1px solid var(--line)}
+section.block h2{font-size:var(--fs-h2-sub);line-height:1.5;margin-top:var(--sp-3);margin-bottom:var(--sp-5)}
+.problem{max-width:40em}
+.problem p{margin:0 0 var(--sp-3)}
+.problem p.goal{font-weight:700;color:var(--ink)}
+.features{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-5);margin:0;padding:0;list-style:none}
+.features figure{margin:0}
+.features img{display:block;width:100%;height:auto;max-width:280px;margin:0 auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg-2)}
+.features figcaption{margin-top:var(--sp-3)}
+.features h3{font-size:var(--fs-h3);line-height:1.5}
+.features p{margin:var(--sp-1) 0 0;color:var(--ink-2)}
+@media (max-width:760px){.features{grid-template-columns:1fr;gap:var(--sp-6)}}
+.steps{margin:0;padding:0;list-style:none;border-top:1px solid var(--line)}
+.steps li{display:grid;grid-template-columns:minmax(0,18em) minmax(0,1fr);gap:var(--sp-1) var(--sp-5);padding:var(--sp-4) 0;border-bottom:1px solid var(--line)}
+.steps b{font-weight:700}
+.steps .how{margin-top:var(--sp-1);font-size:var(--fs-ui);color:var(--ink-3)}
+.steps p{margin:0;color:var(--ink-2);max-width:40em}
+@media (max-width:640px){.steps li{grid-template-columns:1fr}}
+.list{margin:0;padding-left:1.2em;max-width:40em}
+.list li{margin-bottom:var(--sp-2)}
+.list li::marker{color:var(--primary)}
+.note{font-size:var(--fs-ui);color:var(--ink-3);margin-top:var(--sp-4);max-width:40em}
+.deliver{margin:0;max-width:40em;border-top:1px solid var(--line)}
+.deliver div{padding:var(--sp-3) 0;border-bottom:1px solid var(--line)}
+.deliver dt{font-weight:700}
+.deliver dd{margin:var(--sp-1) 0 0;color:var(--ink-2)}
+.problem .voice{margin:0 0 var(--sp-4);padding-left:var(--sp-4);border-left:2px solid var(--primary)}
+.foot-back{padding-block:var(--sp-6) var(--sp-7);border-top:1px solid var(--line)}
+footer{background:var(--deep);color:var(--on-deep);border-top:1px solid var(--line-on-deep)}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:var(--sp-3);padding-block:var(--sp-5);font-family:var(--en);font-size:var(--fs-label);letter-spacing:.08em;opacity:.6}
+.features.wide{grid-template-columns:1fr;gap:var(--sp-7)}
+.features.wide figure{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:var(--sp-6);align-items:center}
+.features.wide img{max-width:none}
+.features.wide figcaption{margin-top:0}
+@media (max-width:760px){.features.wide figure{grid-template-columns:1fr;gap:var(--sp-4)}}
+</style>
+</head>
+<body>
+<header class="site-head">
+  <div class="wrap">
+    <a class="logo" href="../index.html#portfolio"><i aria-hidden="true"></i>AI Workflow &amp; Content<small>Portfolio</small></a>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="intro">
+      <a class="back" href="../index.html#portfolio">← ポートフォリオへ戻る</a>
+      <div class="label" style="margin-top:var(--sp-5)">Case</div>
+      <h1><span class="ph">AI講座の講義を</span><span class="ph">自動で作る仕組み</span></h1>
+      <p class="lead">初心者向けのAI業務改善講座の講義を、AIが作り、受講者役のAIが点検し、直すところまで自動で回す仕組みです。この仕組みと、同じ型を使った作成の手順で、スライド・台本・読み上げ音声つきの動画まで121本の講義を作りました（受講者役の点検を通したのは、そのうち72本です）。自分の講座のために企画から開発まで行いました。</p>
+      <div class="cover"><img src="../assets/lecture-factory_cover.webp" alt="この仕組みで作った講義スライド4枚。表紙・表・カード・図の4種類が、同じデザインでそろっている" width="1200" height="750"></div>
+      <dl class="meta"><dt>種類</dt><dd>自動化の仕組み（パソコンで動かすプログラム）</dd><dt>担当</dt><dd>企画・設計・開発</dd><dt>使用技術</dt><dd>Python・Node.js／Claude API（講義づくりと点検）／ElevenLabs（読み上げ音声）</dd><dt>納品物</dt><dd>仕組み一式・使い方の手順書（出力のサンプルつき）</dd></dl>
+    </div>
+
+    <section class="block">
+      <div class="label"><span class="num">01</span>Problem</div>
+      <h2>困りごと</h2>
+      <div class="problem"><p class="voice">「初心者向けの講座を、100本を超える講義で作りたい。1本ずつ手で作ると、スライドの見た目や言葉の難しさがばらつく。だれにとって分かりにくいかも、自分ひとりでは確かめきれない。」</p><p class="goal">そこで、AIには講義の中身だけを作らせ、見た目は決まった型で描き、立場のちがう受講者役のAIが点検して直す流れを、自動で回すことを目指しました。</p></div>
+    </section>
+
+    <section class="block">
+      <div class="label"><span class="num">02</span>Features</div>
+      <h2>作ったもの</h2>
+      <ul class="features wide">
+        <li><figure><img src="../assets/lecture-factory_slide.webp" alt="講義スライドの1枚。「記録は、この4列だけでいい」という見出しと、時間帯・やったこと・分・ひとことメモの表" width="1200" height="750" loading="lazy"><figcaption><h3><span class="ph">中身はAI、</span><span class="ph">見た目は型で固定</span></h3><p>AIが作るのは、講義の中身（文字のデータ）だけです。スライドの見た目は、講座の段階（初級・中級）ごとに決めた型で描くので、同じ段階の講義はすべて同じデザインになります。</p></figcaption></figure></li>
+        <li><figure><img src="../assets/lecture-factory_review.webp" alt="受講者役4人のレビュー。フリーランス・会社員・個人事業主・小さな会社の経営者が、役立ち度と分かりやすさを5段階でつけ、よい点と直してほしい点を書いている" width="1200" height="750" loading="lazy"><figcaption><h3><span class="ph">受講者役の4人が</span><span class="ph">点検して直す</span></h3><p>立場のちがう4人（フリーランス・会社員・個人事業主・小さな会社の経営者）になりきったAIが、役立ち度と分かりやすさを5段階でつけ、直してほしい点を書きます。その声をもとにAIが直し、スライドを描き直します。この点検を通したのは72本です。</p></figcaption></figure></li>
+        <li><figure><img src="../assets/lecture-factory_video.webp" alt="講義動画の1場面と、1本の講義でできるものの一覧。スライド9枚・講義台本・読み上げ音声・講義動画5分34秒・講義の中身のデータ・レビュー記録4人分" width="1200" height="750" loading="lazy"><figcaption><h3><span class="ph">台本と音声つきの</span><span class="ph">動画まで</span></h3><p>スライドのメモに入れた台本を読み上げ音声にして、スライドと合わせた動画にします。121本の講義で、動画は合わせて約9時間分です。</p></figcaption></figure></li>
+      </ul>
+      <p class="note">画面は、この仕組みで実際に作った講義のスライドと記録です。レビューの画面は、記録のファイルを見やすく並べ直したものです。</p>
+    </section>
+
+    <section class="block">
+      <div class="label"><span class="num">03</span>Ideas</div>
+      <h2>工夫したこと</h2>
+      <dl class="deliver"><div><dt>ずれを判定する基準を1つにまとめる</dt><dd>だれ向けか・何を優先するかを1つのファイルに書き、点検つきの流れで作る講義は、1本ごとにそこからずれていないかを AI が確かめます。第1〜6章は、最後に全章をまとめてもう一度確かめました。</dd></div><div><dt>AI の指摘をうのみにしない</dt><dd>受講者役の指摘は、すべてをそのまま直すのではなく、講座の方針に合うかで直すかどうかを決めます。判断のもとになったレビューの原文は、記録として残します。</dd></div><div><dt>声と読み方をそろえる</dt><dd>読み上げの声・速さ・抑揚を固定し、読み間違えやすい言葉は読み方の辞書で直してから音声にします。</dd></div></dl>
+    </section>
+
+    <section class="block">
+      <div class="label"><span class="num">04</span>Process</div>
+      <h2>進め方</h2>
+      <p class="note" style="margin:0 0 var(--sp-4)">どの仕組みも、次の5つの観点で整理して作っています。</p>
+      <ol class="steps">
+        <li><div><b>目的から決める</b><p class="how">だれが・いつ・何のために使うかを先に決め、「どうなれば完成か」を1つずつ言葉にする</p></div><p>「ITが苦手な初心者を振り落とさない」を最優先に決め、講義ごとのワークや長さの決まりも、この基準に書きました。</p></li>
+        <li><div><b>続けられる使いやすさ</b><p class="how">使う人が無理なく続けられる分量と読みやすさを、先に決める</p></div><p>受講者が読みやすいように、スライドは1枚に1つのことだけを書き、見出しと本文の長さに上限を決めました。</p></li>
+        <li><div><b>データの安全</b><p class="how">どのデータをどこへ送ってよいかを先に決め、それ以外には送らない</p></div><p>AI と音声サービスの利用キーはプログラムに書かず、パソコンの設定から読みます。外に送るのは講義の設計と台本だけです。</p></li>
+        <li><div><b>壊さない・失わない</b><p class="how">直しても崩れない作りにし、前の状態に戻せるようにする</p></div><p>直すときは講義の中身のデータだけを直して描き直すので、見た目が崩れません。作り直す前の出力は控えを残しています。</p></li>
+        <li><div><b>使いながら育てる</b><p class="how">実際に使い、気づいた所を直す</p></div><p>中級の講義は、初級で決めた基準と型を引き継ぎ、中級向けの基準と色の型を足して作りました。</p></li>
+      </ol>
+    </section>
+
+    <section class="block">
+      <div class="label"><span class="num">05</span>Security &amp; Data</div>
+      <h2>安全とデータの扱い</h2>
+      <ul class="list">
+        <li>AI（Claude）には、講義の設計・講座の方針・受講者役の設定・講義の中身だけを送ります。個人の情報は扱いません。</li>
+        <li>音声サービス（ElevenLabs）には、読み上げる台本の文だけを送ります。</li>
+        <li>スライドを画像にする作業と、動画をつなぐ作業は、パソコンの中だけで行います。</li>
+        <li>利用キーはプログラムやファイルに書かず、パソコンの設定（環境変数）にだけ置きます。</li>
+        <li>AI の点検は参考として使い、最終的な確認は人が行います。</li>
+      </ul>
+    </section>
+
+    <section class="block">
+      <div class="label"><span class="num">06</span>Deliverables</div>
+      <h2>納品物のイメージ</h2>
+      <dl class="deliver"><div><dt>仕組み一式</dt><dd>プログラムと設定のファイル（講座の方針・受講者役の設定・AI への指示文）。方針のファイルを書きかえると、すべての講義の判定基準が変わります</dd></div><div><dt>使い方の手順書</dt><dd>準備から、1本だけ作る・まとめて作る・最後に全体を確かめるまでの手順</dd></div></dl>
+      <p class="note">あわせて、次の資料もお付けします。</p>
+      <dl class="deliver" style="margin-top:var(--sp-3)"><div><dt>出力のサンプル</dt><dd>スライド・講義台本・講義動画・レビューの記録の実物</dd></div></dl>
+      <p class="note">見本の仕組みは自分用のため、一部そろっていない資料もあります。</p>
+    </section>
+
+    <div class="foot-back"><a class="back" href="../index.html#portfolio">← ポートフォリオへ戻る</a></div>
+  </div>
+</main>
+<footer><div class="wrap"><span>© 2026 AI Workflow &amp; Content</span><span>All rights reserved.</span></div></footer>
+</body>
+</html>
