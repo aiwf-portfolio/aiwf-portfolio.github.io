@@ -118,7 +118,6 @@ section.block{padding-block:var(--sp-section)}
 
 /* 見本のカード */
 .works{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:var(--gap-col);row-gap:var(--sp-9)}
-.works:not(.filtered) .work:nth-child(even){margin-top:var(--sp-9)}
 .work{display:flex;flex-direction:column;gap:var(--sp-6)}
 .work[hidden]{display:none}
 .cover{position:relative;margin-right:var(--sp-4)}
@@ -137,7 +136,7 @@ section.block{padding-block:var(--sp-section)}
 .work .more:hover{color:var(--rose)}
 .work .more:hover .arr{width:36px}
 .work .more:active{opacity:.7}
-@media (max-width:860px){.works{grid-template-columns:minmax(0,1fr);row-gap:var(--sp-8)}.works:not(.filtered) .work:nth-child(even){margin-top:0}}
+@media (max-width:860px){.works{grid-template-columns:minmax(0,1fr);row-gap:var(--sp-8)}}
 
 /* footer */
 footer{background:var(--deep-2);color:var(--on-deep)}
