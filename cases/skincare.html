@@ -6,191 +6,286 @@
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>肌の記録と振り返りアプリ｜AI Workflow Portfolio</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <style>
-@font-face{font-family:"Noto Sans JP";src:url("../assets/notosansjp.woff2") format("woff2");font-weight:100 900;font-display:swap}
-@font-face{font-family:"Inter";src:url("../assets/inter.woff2") format("woff2");font-weight:100 900;font-display:swap}
+/* 書体: assets/ に使う文字だけを切り出したもの（外への通信なし）。太さの範囲を広げて、ない太さを無理に太らせないようにしている */
+@font-face{font-family:"Zen Kaku Gothic New";src:url("../assets/zenkaku-regular.woff2") format("woff2");font-weight:400 500;font-display:swap}
+@font-face{font-family:"Zen Kaku Gothic New";src:url("../assets/zenkaku-bold.woff2") format("woff2");font-weight:600 700;font-display:swap}
+@font-face{font-family:"Shippori Mincho";src:url("../assets/shippori-medium.woff2") format("woff2");font-weight:400 700;font-display:swap}
+@font-face{font-family:"Cormorant Garamond";src:url("../assets/cormorant.woff2") format("woff2");font-weight:300 700;font-style:normal;font-display:swap}
+@font-face{font-family:"Cormorant Garamond";src:url("../assets/cormorant-italic.woff2") format("woff2");font-weight:300 700;font-style:italic;font-display:swap}
+
 :root{
-  --bg:#FFFFFF;
-  --bg-2:#F3F5F8;
+  /* 色: アイボリー × モカ × くすみローズ（2026-10-04。トップと同じ） */
+  --bg:#FAF7F3;
+  --bg-2:#F2ECE5;
+  --blush:#F5EBE7;
   --surface:#FFFFFF;
-  --ink:#0F1A2B;
-  --ink-2:#4A5568;
-  --ink-3:#5F6B7E;
-  --line:#E2E6EC;
-  --line-strong:#8591A5;
-  --line-on-deep:rgba(255,255,255,.1);
-  --primary:#1C4E9E;
+  --ink:#3B3230;
+  --ink-2:#5E524D;
+  --ink-3:#74675F;
+  --line:#E4DAD2;
+  --line-strong:#948072;
+  --gold:#B89A6E;
+  --gold-ink:#82663D;
+  --primary:#7E6357;
+  --primary-hover:#654E44;
   --primary-ink:#FFFFFF;
-  --primary-soft:#E8EEF8;
-  --deep:#0E2240;
-  --on-deep:#E9EEF6;
-  --sans:"Noto Sans JP","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
-  --en:"Inter","Helvetica Neue",Arial,sans-serif;
-  --fs-h2:clamp(24px,3vw,36px);
-  --fs-h2-sub:clamp(20px,2.4vw,28px);
-  --fs-h3:17px;
+  --rose:#96594F;
+  --rose-soft:#E9D3CC;
+  --deep:#4A3C36;
+  --deep-2:#3E322D;
+  --on-deep:#F6EFE9;
+  --deep-accent:#D9BFA9;
+  --deep-line:rgba(246,239,233,.24);
+  --shadow-device:0 16px 36px rgba(74,60,54,.14);
+  /* 書体 */
+  --mincho:"Shippori Mincho","Yu Mincho","YuMincho","Hiragino Mincho ProN",serif;
+  --sans:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
+  --en:"Cormorant Garamond","Times New Roman",serif;
+  /* 文字の大きさ */
+  --fs-display:clamp(28px,3.6vw,44px);
+  --fs-en:clamp(34px,4.4vw,52px);
+  --fs-h2:clamp(22px,2.4vw,28px);
+  --fs-h3:19px;
   --fs-body:16px;
   --fs-ui:14px;
-  --fs-label:12px;
-  --sp-1:4px;
-  --sp-2:8px;
-  --sp-3:12px;
-  --sp-4:16px;
-  --sp-5:24px;
-  --sp-6:32px;
-  --sp-7:48px;
-  --radius:4px;
-  --max:1120px;
+  --fs-note:12px;
+  --fs-label:15px;
+  --fs-num:20px;     /* 番号「01」・Case。トップと事例ページで同じ大きさ */   /* 英字のラベル */
+  --fs-lead:17px;    /* 明朝の小見出し・声 */
+  /* 余白 */
+  --sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:24px;--sp-6:32px;--sp-7:48px;--sp-8:72px;--sp-9:120px;
+  --sp-section:clamp(72px,9vw,120px);
+  /* 角丸 */
+  --radius:2px;
+  --radius-pill:999px;
+  --radius-device:20px;
+  --max:1080px;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#0B111B;--bg-2:#111927;--surface:#141D2C;--ink:#E8ECF2;--ink-2:#A9B3C2;--ink-3:#8E99AE;
-    --line:#243044;--line-strong:#6E7D94;--primary:#6C9BE8;--primary-ink:#0B111B;--primary-soft:#172640;--deep:#0F1C31;--on-deep:#E8ECF2;
+    --bg:#1E1916;--bg-2:#26201C;--blush:#2E2421;--surface:#2A231F;--ink:#F0E7E0;--ink-2:#CDBFB5;--ink-3:#AE9F95;
+    --line:#3D332E;--line-strong:#86766B;--gold:#A88D66;--gold-ink:#D2B68A;--primary:#D8BCAB;--primary-hover:#E8D2C4;--primary-ink:#1E1916;
+    --rose:#E3AEA4;--rose-soft:#4B3631;--deep:#15110F;--deep-2:#100D0B;--on-deep:#F0E7E0;--deep-accent:#D9BFA9;--deep-line:rgba(240,231,224,.2);
+    --shadow-device:0 16px 36px rgba(0,0,0,.4);
   }
 }
 :root[data-theme="dark"]{
-  --bg:#0B111B;--bg-2:#111927;--surface:#141D2C;--ink:#E8ECF2;--ink-2:#A9B3C2;--ink-3:#8E99AE;
-  --line:#243044;--line-strong:#6E7D94;--primary:#6C9BE8;--primary-ink:#0B111B;--primary-soft:#172640;--deep:#0F1C31;--on-deep:#E8ECF2;
+  --bg:#1E1916;--bg-2:#26201C;--blush:#2E2421;--surface:#2A231F;--ink:#F0E7E0;--ink-2:#CDBFB5;--ink-3:#AE9F95;
+  --line:#3D332E;--line-strong:#86766B;--gold:#A88D66;--gold-ink:#D2B68A;--primary:#D8BCAB;--primary-hover:#E8D2C4;--primary-ink:#1E1916;
+  --rose:#E3AEA4;--rose-soft:#4B3631;--deep:#15110F;--deep-2:#100D0B;--on-deep:#F0E7E0;--deep-accent:#D9BFA9;--deep-line:rgba(240,231,224,.2);
+  --shadow-device:0 16px 36px rgba(0,0,0,.4);
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:var(--fs-body);line-height:1.85;letter-spacing:.03em;-webkit-font-smoothing:antialiased}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:var(--fs-body);line-height:1.85;letter-spacing:.05em;font-variant-numeric:lining-nums;-webkit-font-smoothing:antialiased}
 a{color:inherit;text-decoration:none}
-a:focus-visible,button:focus-visible{outline:2px solid var(--primary);outline-offset:3px}
-.wrap{max-width:var(--max);margin:0 auto;padding-inline:clamp(16px,4vw,40px)}
-h1,h2,h3{font-weight:700;text-wrap:balance;margin:0;letter-spacing:.04em;font-feature-settings:"palt"}
+a:focus-visible{outline:2px solid var(--rose);outline-offset:4px}
+footer a:focus-visible{outline-color:var(--deep-accent)}
+img{max-width:100%}
+p,dd,li{text-wrap:pretty}
+.wrap{max-width:var(--max);margin:0 auto;padding-inline:clamp(16px,5vw,56px)}
+h1,h2,h3,.deliver dt,.sysmap figcaption{font-family:var(--mincho);font-weight:500;line-height:1.5;letter-spacing:.08em;font-feature-settings:"palt";text-wrap:balance;word-break:auto-phrase;margin:0}
 .ph{display:inline-block}
 
-.label{display:flex;align-items:center;gap:var(--sp-3);font-family:var(--en);font-size:var(--fs-label);font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--primary)}
-.label::before{content:"";width:24px;height:2px;background:var(--primary)}
-.label .num{color:var(--ink-3);font-variant-numeric:tabular-nums}
-.site-head{position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:1px solid var(--line)}
-.site-head .wrap{display:flex;align-items:center;justify-content:space-between;height:68px;gap:var(--sp-5)}
-.logo{display:flex;align-items:center;gap:var(--sp-3);min-height:44px;font-family:var(--en);font-weight:700;font-size:var(--fs-body);letter-spacing:.06em}
-.logo:active{color:var(--primary)}
-.logo i{width:20px;height:20px;border:2px solid var(--primary);border-radius:3px;background:linear-gradient(var(--primary),var(--primary)) right 2px bottom 2px/8px 8px no-repeat}
-.logo small{font-family:var(--sans);font-size:var(--fs-label);font-weight:500;color:var(--ink-3);letter-spacing:.1em}
-@media (max-width:860px){.logo small{display:none}}
-.back{display:inline-flex;align-items:center;min-height:44px;color:var(--primary);font-size:var(--fs-ui);font-weight:700;text-decoration:underline;text-underline-offset:3px}
-.back:active{color:var(--ink)}
-.intro{padding-block:var(--sp-6) var(--sp-7)}
-.intro h1{font-size:var(--fs-h2);line-height:1.45;margin-top:var(--sp-4)}
-.intro .lead{color:var(--ink-2);margin:var(--sp-4) 0 0;max-width:40em}
-.intro .cover{max-width:880px;margin-top:var(--sp-6);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--bg-2)}
-.intro .cover img{display:block;width:100%;height:auto}
-.meta{margin:var(--sp-5) 0 0;display:grid;grid-template-columns:auto 1fr;gap:var(--sp-2) var(--sp-5);font-size:var(--fs-ui)}
-.meta dt{color:var(--ink-3)}
-.meta dd{margin:0}
-section.block{padding-block:var(--sp-7);border-top:1px solid var(--line)}
-section.block h2{font-size:var(--fs-h2-sub);line-height:1.5;margin-top:var(--sp-3);margin-bottom:var(--sp-5)}
+/* 矢印（細い線） */
+.arr{position:relative;display:inline-block;flex:none;width:28px;height:1px;background:currentColor;transition:width .2s}
+.arr::after{content:"";position:absolute;right:0;top:0;width:8px;height:1px;background:currentColor;transform:rotate(35deg);transform-origin:right center}
+.arr.rev{transform:scaleX(-1)}
+
+/* ボタン・リンク */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--sp-4);min-height:56px;padding:0 var(--sp-6);border:1px solid var(--primary);border-radius:var(--radius);color:var(--primary);font-size:var(--fs-ui);font-weight:500;letter-spacing:.14em;white-space:nowrap;transition:background .2s,color .2s,border-color .2s}
+.btn:hover{background:var(--primary);color:var(--primary-ink)}
+.btn:hover .arr{width:36px}
+.btn:active{transform:translateY(1px)}
+.btn.solid{background:var(--primary);color:var(--primary-ink)}
+.btn.solid:hover{background:var(--primary-hover);border-color:var(--primary-hover)}
+.back{display:inline-flex;align-items:center;gap:var(--sp-3);min-height:44px;color:var(--ink-2);font-size:var(--fs-ui);font-weight:500;letter-spacing:.12em;border-bottom:1px solid var(--line-strong);transition:color .2s,border-color .2s}
+.back:hover{color:var(--rose);border-color:var(--rose)}
+.back:active{opacity:.7}
+
+/* header */
+.site-head{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 95%,transparent);border-bottom:1px solid var(--line)}
+.site-head .wrap{display:flex;align-items:center;height:80px}
+.logo{display:flex;align-items:center;gap:var(--sp-3);min-height:44px;white-space:nowrap;font-family:var(--en);font-weight:600;font-size:21px;letter-spacing:.06em;line-height:1.2}
+.logo svg{flex:none;width:26px;height:32px}
+.logo .m-arch{fill:none;stroke:var(--gold-ink);stroke-width:1.3}
+.logo .m-a{font-family:var(--en);font-style:italic;font-weight:600;font-size:17px;fill:var(--rose)}
+.logo:active{opacity:.7}
+@media (max-width:900px){.site-head .wrap{height:64px}.logo{font-size:18px}}
+@media (max-width:359px){.site-head .logo{white-space:normal}}
+@media (max-width:480px){.site-head .wrap{gap:var(--sp-3)}.site-head .logo{gap:var(--sp-2);font-size:16px;letter-spacing:.02em}.site-head .btn{padding:0 var(--sp-4);letter-spacing:.06em}}
+
+/* intro */
+.intro{padding-block:clamp(40px,6vw,80px) clamp(72px,9vw,120px)}
+.case-label{display:flex;align-items:center;gap:var(--sp-4);margin:var(--sp-7) 0 0;font-family:var(--en);font-style:italic;font-size:var(--fs-num);letter-spacing:.08em;color:var(--rose)}
+.case-label::after{content:"";width:48px;height:1px;background:var(--gold)}
+.intro h1{margin-top:var(--sp-4);font-size:var(--fs-display);line-height:1.5;letter-spacing:.1em}
+.intro .lead{margin:var(--sp-5) 0 0;max-width:40em;color:var(--ink-2)}
+.demo{margin:var(--sp-3) 0 0}
+.demo .back{color:var(--primary)}
+.cover{position:relative;max-width:920px;margin:var(--sp-7) 16px 0 0}
+.cover::before{content:"";position:absolute;inset:16px -16px -16px 16px;border:1px solid var(--gold);pointer-events:none}
+.cover .frame{position:relative;overflow:hidden;border-radius:var(--radius);background:var(--bg-2)}
+.cover img{display:block;width:100%;height:auto}
+.meta{max-width:920px;margin:var(--sp-8) 0 0;display:grid;grid-template-columns:auto 1fr;font-size:var(--fs-ui);border-top:1px solid var(--line)}
+.meta dt,.meta dd{padding:var(--sp-3) 0;border-bottom:1px solid var(--line)}
+.meta dt{padding-right:var(--sp-6);color:var(--ink-3);white-space:nowrap}
+.meta dd{margin:0;font-size:var(--fs-body);max-width:38em}
+
+/* sections */
+section.block{padding-block:var(--sp-section)}
+section.alt{background:var(--bg-2)}
+.sec-title{margin-bottom:var(--sp-7)}
+.sec-title .en{margin:0;display:flex;align-items:baseline;gap:var(--sp-4);font-family:var(--en);font-size:var(--fs-en);font-weight:500;line-height:1.3;letter-spacing:.03em}
+.sec-title .en .no{font-size:var(--fs-num);font-style:italic;color:var(--rose);letter-spacing:.06em}
+.sec-title h2{display:flex;align-items:center;gap:var(--sp-4);margin-top:var(--sp-2);font-size:var(--fs-h2)}
+.sec-title h2::before{content:"";flex:none;width:32px;height:1px;background:var(--gold)}
 .problem{max-width:40em}
-.problem p{margin:0 0 var(--sp-3)}
-.problem p.goal{font-weight:700;color:var(--ink)}
-.features{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-5);margin:0;padding:0;list-style:none}
+.problem p{margin:0 0 var(--sp-4)}
+.problem .voice{margin:0 0 var(--sp-6);padding:var(--sp-2) 0 var(--sp-2) var(--sp-5);border-left:1px solid var(--gold);font-family:var(--mincho);font-size:var(--fs-lead);line-height:1.9;letter-spacing:.06em}
+.problem p.goal{font-weight:700}
+.features{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-8) var(--sp-7);margin:0;padding:0;list-style:none}
 .features figure{margin:0}
-.features img{display:block;width:100%;height:auto;max-width:280px;margin:0 auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg-2)}
-.features figcaption{margin-top:var(--sp-3)}
-.features h3{font-size:var(--fs-h3);line-height:1.5}
-.features p{margin:var(--sp-1) 0 0;color:var(--ink-2)}
-@media (max-width:760px){.features{grid-template-columns:1fr;gap:var(--sp-6)}}
+.features img{display:block;width:100%;height:auto;max-width:260px;margin:0 auto;border-radius:var(--radius-device);background:var(--surface);box-shadow:var(--shadow-device)}
+.features figcaption{margin-top:var(--sp-6)}
+.features h3{font-size:var(--fs-h3)}
+.features p{margin:var(--sp-3) 0 0;color:var(--ink-2)}
+@media (max-width:760px){.features{grid-template-columns:1fr}}
+.features + .note{margin-top:var(--sp-7)}
+.note{max-width:40em;margin:var(--sp-5) 0 0;color:var(--ink-3)}
+.deliver{margin:0;max-width:44em;border-top:1px solid var(--line)}
+.deliver div{padding:var(--sp-5) 0;border-bottom:1px solid var(--line)}
+.deliver dt{font-size:var(--fs-lead);font-weight:600;letter-spacing:.06em}
+.deliver dd{margin:var(--sp-2) 0 0;color:var(--ink-2)}
 .steps{margin:0;padding:0;list-style:none;border-top:1px solid var(--line)}
-.steps li{display:grid;grid-template-columns:minmax(0,18em) minmax(0,1fr);gap:var(--sp-1) var(--sp-5);padding:var(--sp-4) 0;border-bottom:1px solid var(--line)}
-.steps b{font-weight:700}
-.steps .how{margin-top:var(--sp-1);font-size:var(--fs-ui);color:var(--ink-3)}
+.steps li{display:grid;grid-template-columns:minmax(0,18em) minmax(0,1fr);gap:var(--sp-2) var(--sp-7);padding:var(--sp-5) 0;border-bottom:1px solid var(--line)}
+.steps h3{font-size:var(--fs-lead);font-weight:600;letter-spacing:.06em}
+.steps .how{margin:var(--sp-2) 0 0;color:var(--ink-3)}
 .steps p{margin:0;color:var(--ink-2);max-width:40em}
 @media (max-width:640px){.steps li{grid-template-columns:1fr}}
 .list{margin:0;padding-left:1.2em;max-width:40em}
-.list li{margin-bottom:var(--sp-2)}
-.list li::marker{color:var(--primary)}
-.note{font-size:var(--fs-ui);color:var(--ink-3);margin-top:var(--sp-4);max-width:40em}
-.deliver{margin:0;max-width:40em;border-top:1px solid var(--line)}
-.deliver div{padding:var(--sp-3) 0;border-bottom:1px solid var(--line)}
-.deliver dt{font-weight:700}
-.deliver dd{margin:var(--sp-1) 0 0;color:var(--ink-2)}
-.problem .voice{margin:0 0 var(--sp-4);padding-left:var(--sp-4);border-left:2px solid var(--primary)}
-.foot-back{padding-block:var(--sp-6) var(--sp-7);border-top:1px solid var(--line)}
-footer{background:var(--deep);color:var(--on-deep);border-top:1px solid var(--line-on-deep)}
-footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:var(--sp-3);padding-block:var(--sp-5);font-family:var(--en);font-size:var(--fs-label);letter-spacing:.08em;opacity:.6}
+.list li{margin-bottom:var(--sp-3);padding-left:var(--sp-1)}
+.list li::marker{color:var(--rose)}
+/* システム構成図 */
+.sysmap{margin:var(--sp-7) 0 0;max-width:560px}
+.sysmap figure{margin:0;padding:var(--sp-5);border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
+.sysmap figcaption{margin-bottom:var(--sp-4);font-family:var(--mincho);font-weight:600}
+.sysmap figcaption small{margin-left:var(--sp-2);font-family:var(--sans);font-size:var(--fs-ui);font-weight:400;color:var(--ink-3)}
+.sysmap ol{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:var(--sp-2)}
+.sysmap li{padding:var(--sp-3) var(--sp-4);border:1px solid var(--line-strong);border-radius:var(--radius);background:var(--bg);font-size:var(--fs-ui);line-height:1.6}
+.sysmap li b{display:block}
+.sysmap li span{color:var(--ink-2)}
+.sysmap li.to::before{content:"↓ ";color:var(--gold-ink)}
+
+/* 戻る */
+.foot-back{padding-block:var(--sp-7) var(--sp-8)}
+/* footer */
+footer{background:var(--deep-2);color:var(--on-deep)}
+footer .wrap{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:var(--sp-4);padding-block:var(--sp-7) var(--sp-6)}
+footer .logo .m-arch{stroke:var(--deep-accent)}
+footer .logo .m-a{fill:var(--deep-accent)}
+footer small{font-family:var(--en);font-size:var(--fs-label);letter-spacing:.1em}
+
+/* 02 だけの部品 */
+.logo small{margin-left:var(--sp-2);font-style:italic;font-weight:500;font-size:var(--fs-lead);color:var(--rose);letter-spacing:.08em}
+.features.wide{grid-template-columns:1fr;gap:var(--sp-8)}
+.features.wide figure{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:var(--sp-7);align-items:center}
+.features.wide img{max-width:none;border-radius:var(--radius)}
+.features.wide figcaption{margin-top:0}
+@media (max-width:760px){.features.wide figure{grid-template-columns:1fr;gap:var(--sp-5)}}
 </style>
 </head>
 <body>
 <header class="site-head">
   <div class="wrap">
-    <a class="logo" href="../index.html#portfolio"><i aria-hidden="true"></i>AI Workflow &amp; Content<small>Portfolio</small></a>
+    <a class="logo" href="../index.html#portfolio"><svg viewBox="0 0 26 32" aria-hidden="true"><path class="m-arch" d="M1.5 31.5V13.5a11.5 11.5 0 0 1 23 0v18"/><text class="m-a" x="13" y="25.5" text-anchor="middle">A</text></svg>AI Workflow &amp; Content<small>Portfolio</small></a>
   </div>
 </header>
 
 <main>
-  <div class="wrap">
-    <div class="intro">
-      <a class="back" href="../index.html#portfolio">← ポートフォリオへ戻る</a>
-      <div class="label" style="margin-top:var(--sp-5)">Case</div>
-      <h1><span class="ph">肌の記録と</span><span class="ph">振り返りアプリ</span></h1>
-      <p class="lead">肌の調子・スキンケア・睡眠・食事を毎日記録し、どんな日に肌の調子がよかったかをグラフで振り返れるWebアプリです。自分用に企画から開発まで行いました。</p>
-      <div class="cover"><img src="../assets/skincare_cover.webp" alt="肌管理アプリの画面。カレンダー、グラフ、記録の3画面" width="1200" height="750"></div>
-      <dl class="meta"><dt>種類</dt><dd>Webアプリ（スマホのブラウザで使う）</dd><dt>担当</dt><dd>企画・設計・開発・テスト</dd><dt>使用技術</dt><dd>HTML・CSS・JavaScript／Google Drive 連携（記録の引き継ぎ）</dd><dt>納品物</dt><dd>Webアプリ一式・使い方の手順書（設計書・動作確認の記録つき）</dd></dl>
+  <section class="intro">
+    <div class="wrap">
+        <a class="back" href="../index.html#portfolio"><span class="arr rev" aria-hidden="true"></span>ポートフォリオへ戻る</a>
+        <p class="case-label">Case</p>
+        <h1><span class="ph">肌の記録と</span><span class="ph">振り返りアプリ</span></h1>
+        <p class="lead">肌の調子・スキンケア・睡眠・食事を毎日記録し、どんな日に肌の調子がよかったかをグラフで振り返れるWebアプリです。自分用に企画から開発まで行いました。</p>
+        <div class="cover"><div class="frame"><img src="../assets/skincare_thumb.webp" alt="肌管理アプリの画面。カレンダー、グラフ、記録の3画面" width="1200" height="750"></div></div>
+        <dl class="meta"><dt>種類</dt><dd>Webアプリ（スマホのブラウザで使う）</dd><dt>担当</dt><dd>企画・設計・開発・テスト</dd><dt>使用技術</dt><dd>HTML・CSS・JavaScript／Google Drive 連携（記録の引き継ぎ）</dd><dt>納品物</dt><dd>Webアプリ一式・使い方の手順書（設計書・動作確認の記録つき）</dd></dl>
     </div>
+  </section>
 
-    <section class="block">
-      <div class="label"><span class="num">01</span>Problem</div>
-      <h2>困りごと</h2>
-      <div class="problem"><p class="voice">「スキンケアを色々と試しても、どれが肌に合っているのか違いがわからない。睡眠や食事など、肌によいことも続けたいのに、つい途切れてしまう。」</p><p class="goal">そこで、「なんとなく」のお手入れを、記録と振り返りで「根拠のあるお手入れ」に変えることを目指しました。</p></div>
-    </section>
+  <section class="block alt">
+    <div class="wrap">
+        <div class="sec-title"><p class="en"><span class="no">01</span>Problem</p><h2>困りごと</h2></div>
+        <div class="problem"><p class="voice">「スキンケアを色々と試しても、どれが肌に合っているのか違いがわからない。睡眠や食事など、肌によいことも続けたいのに、つい途切れてしまう。」</p><p class="goal">そこで、「なんとなく」のお手入れを、記録と振り返りで「根拠のあるお手入れ」に変えることを目指しました。</p></div>
+    </div>
+  </section>
 
-    <section class="block">
-      <div class="label"><span class="num">02</span>Features</div>
-      <h2>作ったもの</h2>
-      <ul class="features">
-        <li><figure><img src="../assets/skincare_calendar.webp" alt="カレンダーの画面。日ごとの肌の調子が色の濃さで表示され、続いている習慣の日数が並ぶ" width="585" height="1266" loading="lazy"><figcaption><h3>カレンダーで調子をひと目で</h3><p>日ごとの肌の調子を色の濃さで表示します。睡眠や食事など、続いているよい習慣の日数も自動で数えます。</p></figcaption></figure></li>
-        <li><figure><img src="../assets/skincare_graph.webp" alt="グラフの画面。肌スコアの折れ線と睡眠時間の棒グラフ" width="585" height="1266" loading="lazy"><figcaption><h3>グラフで原因を振り返る</h3><p>肌のスコアと睡眠時間などを重ねて表示し、調子のよい日に何をしていたかを見比べられます。</p></figcaption></figure></li>
-        <li><figure><img src="../assets/skincare_record.webp" alt="記録の画面。肌の調子を1〜5で選び、朝に使ったスキンケアを選ぶ" width="585" height="1266" loading="lazy"><figcaption><h3>タップだけで毎日の記録</h3><p>肌の調子、朝と夜に使ったスキンケア、睡眠・食事をタップ中心で記録できます。前回と同じ内容もすぐ入れられます。</p></figcaption></figure></li>
-      </ul>
-      <p class="note">画面は、架空のデータを入れて撮影しています。</p>
-    </section>
+  <section class="block">
+    <div class="wrap">
+        <div class="sec-title"><p class="en"><span class="no">02</span>Features</p><h2>作ったもの</h2></div>
+        <ul class="features">
+          <li><figure><img src="../assets/skincare_calendar.webp" alt="カレンダーの画面。日ごとの肌の調子が色の濃さで表示され、続いている習慣の日数が並ぶ" width="585" height="1266" loading="lazy"><figcaption><h3><span class="ph">カレンダーで</span><span class="ph">調子を</span><span class="ph">ひと目で</span></h3><p>日ごとの肌の調子を色の濃さで表示します。睡眠や食事など、続いているよい習慣の日数も自動で数えます。</p></figcaption></figure></li>
+          <li><figure><img src="../assets/skincare_graph.webp" alt="グラフの画面。肌スコアの折れ線と睡眠時間の棒グラフ" width="585" height="1266" loading="lazy"><figcaption><h3><span class="ph">グラフで</span><span class="ph">原因を</span><span class="ph">振り返る</span></h3><p>肌のスコアと睡眠時間などを重ねて表示し、調子のよい日に何をしていたかを見比べられます。</p></figcaption></figure></li>
+          <li><figure><img src="../assets/skincare_record.webp" alt="記録の画面。肌の調子を1〜5で選び、朝に使ったスキンケアを選ぶ" width="585" height="1266" loading="lazy"><figcaption><h3><span class="ph">タップだけで</span><span class="ph">毎日の記録</span></h3><p>肌の調子、朝と夜に使ったスキンケア、睡眠・食事をタップ中心で記録できます。前回と同じ内容もすぐ入れられます。</p></figcaption></figure></li>
+        </ul>
+        <p class="note">画面は、架空のデータを入れて撮影しています。</p>
+    </div>
+  </section>
 
-    <section class="block">
-      <div class="label"><span class="num">03</span>Ideas</div>
-      <h2>工夫したこと</h2>
-      <dl class="deliver"><div><dt>続けられるように、入力を増やさない</dt><dd>睡眠時間と食べていない時間は、時刻から自動で計算します。「前回と同じにする」ボタンもあり、スキンケア用品は名前から種類を自動で選びます。</dd></div><div><dt>よい習慣が続いていることが見える</dt><dd>よいことをした日にはカレンダーに ♥ がつき、続いた日数を自動で数えます。</dd></div><div><dt>記録を失わない</dt><dd>記録は本人の Google Drive に自動で引き継ぎます。しばらく控えを取っていないとお知らせが出て、読めないデータも上書きせずに残します。</dd></div></dl>
-    </section>
+  <section class="block alt">
+    <div class="wrap">
+        <div class="sec-title"><p class="en"><span class="no">03</span>Ideas</p><h2>工夫したこと</h2></div>
+        <dl class="deliver"><div><dt><span class="ph">続けられるように、</span><span class="ph">入力を</span><span class="ph">増やさない</span></dt><dd>睡眠時間と食べていない時間は、時刻から自動で計算します。「前回と同じにする」ボタンもあり、スキンケア用品は名前から種類を自動で選びます。</dd></div><div><dt><span class="ph">よい習慣が</span><span class="ph">続いていることが</span><span class="ph">見える</span></dt><dd>よいことをした日にはカレンダーに ♥ がつき、続いた日数を自動で数えます。</dd></div><div><dt><span class="ph">記録を</span><span class="ph">失わない</span></dt><dd>記録は本人の Google Drive に自動で引き継ぎます。しばらく控えを取っていないとお知らせが出て、読めないデータも上書きせずに残します。</dd></div></dl>
+    </div>
+  </section>
 
-    <section class="block">
-      <div class="label"><span class="num">04</span>Process</div>
-      <h2>進め方</h2>
-      <p class="note" style="margin:0 0 var(--sp-4)">どのアプリも、次の5つの観点で整理して作っています。</p>
-      <ol class="steps">
-        <li><div><b>目的から決める</b><p class="how">だれが・いつ・何のために使うかを先に決め、「どうなれば完成か」を1つずつ言葉にする</p></div><p>「何をしたとき肌がよかったかを見返せる」を目的に、記録する項目ごとに「どうなれば完成か」を決めました（例: 寝た時刻と起きた時刻を入れると、日をまたいでも睡眠時間が正しく出る）。</p></li>
-        <li><div><b>続けられる使いやすさ</b><p class="how">文字の大きさ・色の濃さ・押しやすさを、決めた基準で確かめる</p></div><p>タップ中心で、入力の手間を減らしました。</p></li>
-        <li><div><b>データの安全</b><p class="how">どのデータをどこへ送ってよいかを先に表で決め、公的なガイドラインをもとに確かめる</p></div><p>記録は端末と本人の Google Drive だけに置きます。</p></li>
-        <li><div><b>壊さない・失わない</b><p class="how">直すたびに、実際に動かして確かめる</p></div><p>画面をまたぐ流れまで確かめ、控えの取り方と戻し方も用意しました。</p></li>
-        <li><div><b>使いながら育てる</b><p class="how">実際に使い、気づいた所を直す</p></div><p>毎日の記録で使いながら、項目を見直しています。</p></li>
-      </ol>
-      <p class="note">使いやすさとデータの安全は、それぞれ独自にまとめたルール（デザインは文字の大きさ・色の濃さ・押しやすさなど。セキュリティは IPA「安全なウェブサイトの作り方」と、OWASP Top 10（Webでよく狙われる弱点の一覧）がもと）の項目ごとに確かめています。</p>
-    </section>
+  <section class="block">
+    <div class="wrap">
+        <div class="sec-title"><p class="en"><span class="no">04</span>Process</p><h2>進め方</h2></div>
+        <p class="note" style="margin:0 0 var(--sp-4)">どのアプリも、次の5つの観点で整理して作っています。</p>
+        <ol class="steps">
+          <li><div><h3>目的から決める</h3><p class="how">だれが・いつ・何のために使うかを先に決め、「どうなれば完成か」を1つずつ言葉にする</p></div><p>「何をしたとき肌がよかったかを見返せる」を目的に、記録する項目ごとに「どうなれば完成か」を決めました（例: 寝た時刻と起きた時刻を入れると、日をまたいでも睡眠時間が正しく出る）。</p></li>
+          <li><div><h3>続けられる使いやすさ</h3><p class="how">文字の大きさ・色の濃さ・押しやすさを、決めた基準で確かめる</p></div><p>タップ中心で、入力の手間を減らしました。</p></li>
+          <li><div><h3>データの安全</h3><p class="how">どのデータをどこへ送ってよいかを先に表で決め、公的なガイドラインをもとに確かめる</p></div><p>記録は端末と本人の Google Drive だけに置きます。</p></li>
+          <li><div><h3>壊さない・失わない</h3><p class="how">直すたびに、実際に動かして確かめる</p></div><p>画面をまたぐ流れまで確かめ、控えの取り方と戻し方も用意しました。</p></li>
+          <li><div><h3>使いながら育てる</h3><p class="how">実際に使い、気づいた所を直す</p></div><p>毎日の記録で使いながら、項目を見直しています。</p></li>
+        </ol>
+        <p class="note">使いやすさとデータの安全は、それぞれ独自にまとめたルール（デザインは文字の大きさ・色の濃さ・押しやすさなど。セキュリティは IPA「安全なウェブサイトの作り方」と、OWASP Top 10（Webでよく狙われる弱点の一覧）がもと）の項目ごとに確かめています。</p>
+    </div>
+  </section>
 
-    <section class="block">
-      <div class="label"><span class="num">05</span>Security &amp; Data</div>
-      <h2>安全とデータの扱い</h2>
-      <ul class="list">
-        <li>サーバーを持たず、記録はスマホのブラウザの中と、本人の Google Drive のアプリ専用フォルダにだけ保存します。</li>
-        <li>Google に渡す権限は、アプリ専用フォルダの読み書きだけに絞っています。</li>
-        <li>データを送ってよい先を表で決め、それ以外には送らない作りにしています。</li>
-      </ul>
-    </section>
+  <section class="block alt">
+    <div class="wrap">
+        <div class="sec-title"><p class="en"><span class="no">05</span>Security &amp; Data</p><h2>安全とデータの扱い</h2></div>
+        <ul class="list">
+          <li>サーバーを持たず、記録はスマホのブラウザの中と、本人の Google Drive のアプリ専用フォルダにだけ保存します。</li>
+          <li>Google に渡す権限は、アプリ専用フォルダの読み書きだけに絞っています。</li>
+          <li>データを送ってよい先を表で決め、それ以外には送らない作りにしています。</li>
+        </ul>
+    </div>
+  </section>
 
-    <section class="block">
-      <div class="label"><span class="num">06</span>Deliverables</div>
-      <h2>納品物のイメージ</h2>
-      <dl class="deliver"><div><dt>Webアプリ一式</dt><dd>画面・動き・保存の仕組みをまとめたファイル。GitHub Pages（無料でWebページを公開できるサービス）などに置くだけで動きます</dd></div><div><dt>使い方・公開の手順書</dt><dd>初めての方でも、手順どおりに進めれば使い始められる資料</dd></div></dl>
-      <p class="note">あわせて、次の資料もお付けします。</p>
-      <dl class="deliver" style="margin-top:var(--sp-3)"><div><dt>設計書</dt><dd>画面の流れ、保存するデータの形、外とのつながりをまとめた資料</dd></div><div><dt>動作確認の記録</dt><dd>何を確かめて、どうだったかの一覧</dd></div></dl>
-      <p class="note">見本のアプリは自分用のため、一部そろっていない資料もあります。</p>
-    </section>
+  <section class="block">
+    <div class="wrap">
+        <div class="sec-title"><p class="en"><span class="no">06</span>Deliverables</p><h2>納品物のイメージ</h2></div>
+        <dl class="deliver"><div><dt>Webアプリ一式</dt><dd>画面・動き・保存の仕組みをまとめたファイル。GitHub Pages（無料でWebページを公開できるサービス）などに置くだけで動きます</dd></div><div><dt>使い方・公開の手順書</dt><dd>初めての方でも、手順どおりに進めれば使い始められる資料です</dd></div></dl>
+        <p class="note">あわせて、次の資料もお付けします。</p>
+        <dl class="deliver" style="margin-top:var(--sp-3)"><div><dt>設計書</dt><dd>画面の流れ、保存するデータの形、外とのつながりをまとめた資料です</dd></div><div><dt>動作確認の記録</dt><dd>何を確かめて、どうだったかの一覧です</dd></div></dl>
+        <p class="note">見本のアプリは自分用のため、一部そろっていない資料もあります。</p>
+    </div>
+  </section>
 
-    <div class="foot-back"><a class="back" href="../index.html#portfolio">← ポートフォリオへ戻る</a></div>
-  </div>
+  <div class="wrap foot-back"><a class="back" href="../index.html#portfolio"><span class="arr rev" aria-hidden="true"></span>ポートフォリオへ戻る</a></div>
 </main>
-<footer><div class="wrap"><span>© 2026 AI Workflow &amp; Content</span><span>All rights reserved.</span></div></footer>
+<footer>
+  <div class="wrap">
+    <a class="logo" href="../index.html#portfolio"><svg viewBox="0 0 26 32" aria-hidden="true"><path class="m-arch" d="M1.5 31.5V13.5a11.5 11.5 0 0 1 23 0v18"/><text class="m-a" x="13" y="25.5" text-anchor="middle">A</text></svg>AI Workflow &amp; Content</a>
+    <small>© 2026 AI Workflow &amp; Content　All rights reserved.</small>
+  </div>
+</footer>
 </body>
 </html>

@@ -6,112 +6,151 @@
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>AI Workflow Portfolio</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <style>
-@font-face{font-family:"Noto Sans JP";src:url("assets/notosansjp.woff2") format("woff2");font-weight:100 900;font-display:swap}
-@font-face{font-family:"Inter";src:url("assets/inter.woff2") format("woff2");font-weight:100 900;font-display:swap}
+/* 書体: assets/ に使う文字だけを切り出したもの（外への通信なし）。太さの範囲を広げて、ない太さを無理に太らせないようにしている */
+@font-face{font-family:"Zen Kaku Gothic New";src:url("assets/zenkaku-regular.woff2") format("woff2");font-weight:400 500;font-display:swap}
+@font-face{font-family:"Zen Kaku Gothic New";src:url("assets/zenkaku-bold.woff2") format("woff2");font-weight:600 700;font-display:swap}
+@font-face{font-family:"Shippori Mincho";src:url("assets/shippori-medium.woff2") format("woff2");font-weight:400 700;font-display:swap}
+@font-face{font-family:"Cormorant Garamond";src:url("assets/cormorant.woff2") format("woff2");font-weight:300 700;font-style:normal;font-display:swap}
+@font-face{font-family:"Cormorant Garamond";src:url("assets/cormorant-italic.woff2") format("woff2");font-weight:300 700;font-style:italic;font-display:swap}
 :root{
-  --bg:#FFFFFF;
-  --bg-2:#F3F5F8;
+  /* 色: アイボリー × モカ × くすみローズ（01_portfolio と同じ。2026-10-08） */
+  --bg:#FAF7F3;
+  --bg-2:#F2ECE5;
   --surface:#FFFFFF;
-  --ink:#0F1A2B;
-  --ink-2:#4A5568;
-  --ink-3:#5F6B7E;
-  --line:#E2E6EC;
-  --line-strong:#8591A5;
-  --line-on-deep:rgba(255,255,255,.1);
-  --primary:#1C4E9E;
+  --ink:#3B3230;
+  --ink-2:#5E524D;
+  --ink-3:#74675F;
+  --line:#E4DAD2;
+  --line-strong:#948072;
+  --gold:#B89A6E;
+  --gold-ink:#82663D;
+  --primary:#7E6357;
+  --primary-hover:#654E44;
   --primary-ink:#FFFFFF;
-  --primary-soft:#E8EEF8;
-  --deep:#0E2240;
-  --on-deep:#E9EEF6;
-  --sans:"Noto Sans JP","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
-  --en:"Inter","Helvetica Neue",Arial,sans-serif;
-  --fs-h2:clamp(24px,3vw,36px);
-  --fs-h3:17px;
+  --rose:#96594F;
+  --deep:#4A3C36;
+  --deep-2:#3E322D;
+  --on-deep:#F6EFE9;
+  --deep-accent:#D9BFA9;
+  --deep-line:rgba(246,239,233,.24);
+  /* 書体 */
+  --mincho:"Shippori Mincho","Yu Mincho","YuMincho","Hiragino Mincho ProN",serif;
+  --sans:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
+  --en:"Cormorant Garamond","Times New Roman",serif;
+  /* 文字の大きさ */
+  --fs-en:clamp(44px,6vw,76px);
+  --fs-h2:clamp(22px,2.4vw,28px);
+  --fs-h3:19px;
+  --fs-lead:17px;
   --fs-body:16px;
+  --fs-label:15px;
+  --fs-num:20px;     /* 番号「01」・Case。トップと事例ページで同じ大きさ */
   --fs-ui:14px;
-  --fs-label:12px;
-  --sp-1:4px;
-  --sp-2:8px;
-  --sp-3:12px;
-  --sp-4:16px;
-  --sp-5:24px;
-  --sp-6:32px;
-  --sp-7:48px;
-  --radius:4px;
-  --max:1120px;
+  /* 余白 */
+  --sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:24px;--sp-6:32px;--sp-7:48px;--sp-8:72px;--sp-9:120px;
+  --sp-section:clamp(80px,10vw,140px);
+  --gap-col:clamp(40px,6vw,88px);
+  /* 角丸 */
+  --radius:2px;
+  --radius-pill:999px;
+  --max:1160px;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#0B111B;--bg-2:#111927;--surface:#141D2C;--ink:#E8ECF2;--ink-2:#A9B3C2;--ink-3:#8E99AE;
-    --line:#243044;--line-strong:#6E7D94;--primary:#6C9BE8;--primary-ink:#0B111B;--primary-soft:#172640;--deep:#0F1C31;--on-deep:#E8ECF2;
+    --bg:#1E1916;--bg-2:#26201C;--surface:#2A231F;--ink:#F0E7E0;--ink-2:#CDBFB5;--ink-3:#AE9F95;
+    --line:#3D332E;--line-strong:#86766B;--gold:#A88D66;--gold-ink:#D2B68A;--primary:#D8BCAB;--primary-hover:#E8D2C4;--primary-ink:#1E1916;
+    --rose:#E3AEA4;--deep:#15110F;--deep-2:#100D0B;--on-deep:#F0E7E0;--deep-accent:#D9BFA9;--deep-line:rgba(240,231,224,.2);
   }
 }
 :root[data-theme="dark"]{
-  --bg:#0B111B;--bg-2:#111927;--surface:#141D2C;--ink:#E8ECF2;--ink-2:#A9B3C2;--ink-3:#8E99AE;
-  --line:#243044;--line-strong:#6E7D94;--primary:#6C9BE8;--primary-ink:#0B111B;--primary-soft:#172640;--deep:#0F1C31;--on-deep:#E8ECF2;
+  --bg:#1E1916;--bg-2:#26201C;--surface:#2A231F;--ink:#F0E7E0;--ink-2:#CDBFB5;--ink-3:#AE9F95;
+  --line:#3D332E;--line-strong:#86766B;--gold:#A88D66;--gold-ink:#D2B68A;--primary:#D8BCAB;--primary-hover:#E8D2C4;--primary-ink:#1E1916;
+  --rose:#E3AEA4;--deep:#15110F;--deep-2:#100D0B;--on-deep:#F0E7E0;--deep-accent:#D9BFA9;--deep-line:rgba(240,231,224,.2);
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:var(--fs-body);line-height:1.85;letter-spacing:.03em;-webkit-font-smoothing:antialiased}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:var(--fs-body);line-height:1.85;letter-spacing:.05em;font-variant-numeric:lining-nums;-webkit-font-smoothing:antialiased}
 a{color:inherit;text-decoration:none}
-a:focus-visible,button:focus-visible{outline:2px solid var(--primary);outline-offset:3px}
-.wrap{max-width:var(--max);margin:0 auto;padding-inline:clamp(16px,4vw,40px)}
-h1,h2,h3{font-weight:700;text-wrap:balance;margin:0;letter-spacing:.04em;font-feature-settings:"palt"}
+a:focus-visible,button:focus-visible{outline:2px solid var(--rose);outline-offset:4px}
+footer a:focus-visible{outline-color:var(--deep-accent)}
+img{max-width:100%}
+p,dd{text-wrap:pretty}
+.wrap{max-width:var(--max);margin:0 auto;padding-inline:clamp(16px,5vw,56px)}
+h1,h2,h3{font-family:var(--mincho);font-weight:500;line-height:1.5;letter-spacing:.08em;font-feature-settings:"palt";text-wrap:balance;word-break:auto-phrase;margin:0}
 .ph{display:inline-block}
-.label{display:flex;align-items:center;gap:var(--sp-3);font-family:var(--en);font-size:var(--fs-label);font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--primary)}
-.label::before{content:"";width:24px;height:2px;background:var(--primary)}
-.label .num{color:var(--ink-3);font-variant-numeric:tabular-nums}
 
+/* 矢印（細い線） */
+.arr{position:relative;display:inline-block;flex:none;width:28px;height:1px;background:currentColor;transition:width .2s}
+.arr::after{content:"";position:absolute;right:0;top:0;width:8px;height:1px;background:currentColor;transform:rotate(35deg);transform-origin:right center}
 
-/* header */
-.site-head{position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:1px solid var(--line)}
-.site-head .wrap{display:flex;align-items:center;justify-content:space-between;height:68px;gap:var(--sp-5)}
-.logo{display:flex;align-items:center;gap:var(--sp-3);min-height:44px;font-family:var(--en);font-weight:700;font-size:var(--fs-body);letter-spacing:.06em}
-.logo:active{color:var(--primary)}
-.logo i{width:20px;height:20px;border:2px solid var(--primary);border-radius:3px;background:linear-gradient(var(--primary),var(--primary)) right 2px bottom 2px/8px 8px no-repeat}
-.logo small{font-family:var(--sans);font-size:var(--fs-label);font-weight:500;color:var(--ink-3);letter-spacing:.1em}
-@media (max-width:860px){.logo small{display:none}}
+/* header（ロゴだけ） */
+.site-head{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
+.site-head .wrap{display:flex;align-items:center;height:80px}
+.logo{display:flex;align-items:center;gap:var(--sp-3);min-height:44px;white-space:nowrap;font-family:var(--en);font-weight:600;font-size:21px;letter-spacing:.06em;line-height:1.2}
+.logo svg{flex:none;width:26px;height:32px}
+.logo .m-arch{fill:none;stroke:var(--gold-ink);stroke-width:1.3}
+.logo .m-a{font-family:var(--en);font-style:italic;font-weight:600;font-size:17px;fill:var(--rose)}
+.logo small{margin-left:var(--sp-2);font-style:italic;font-weight:500;font-size:var(--fs-lead);color:var(--rose);letter-spacing:.08em}
+.logo:active{opacity:.7}
+@media (max-width:900px){.site-head .wrap{height:64px}.logo{font-size:18px}}
+@media (max-width:359px){.site-head .logo{white-space:normal}}
 
-/* sections */
-section.block{padding-block:clamp(64px,8vw,112px)}
-.sec-head{margin-bottom:var(--sp-7)}
-.sec-head h2{font-size:var(--fs-h2);line-height:1.45;margin-top:var(--sp-4)}
-@media (max-width:760px){.sec-head{margin-bottom:var(--sp-6)}}
+/* 見出し（英字の大見出し＋和文） */
+section.block{padding-block:var(--sp-section)}
+.sec-head{margin-bottom:var(--sp-8)}
+.sec-title .en{margin:0;display:flex;align-items:baseline;gap:var(--sp-4);font-family:var(--en);font-size:var(--fs-en);font-weight:500;line-height:1.3;letter-spacing:.03em}
+.sec-title .en .no{font-size:var(--fs-num);font-style:italic;color:var(--rose);letter-spacing:.06em}
+.sec-title h2{display:flex;align-items:center;gap:var(--sp-4);margin-top:var(--sp-2);font-size:var(--fs-h2)}
+.sec-title h2::before{content:"";flex:none;width:32px;height:1px;background:var(--gold)}
+@media (max-width:760px){.sec-head{margin-bottom:var(--sp-7)}}
 
-/* portfolio */
+/* 絞り込み */
 .filters[hidden]{display:none}
-.filters{display:flex;flex-wrap:wrap;gap:var(--sp-2);margin-bottom:var(--sp-6)}
-.chip{font:inherit;font-size:var(--fs-ui);min-height:44px;padding:0 var(--sp-4);border:1px solid var(--line-strong);border-radius:var(--radius);background:var(--surface);color:var(--ink-2);cursor:pointer;transition:border-color .2s,color .2s,background .2s}
+.filters{display:flex;flex-wrap:wrap;gap:var(--sp-2);margin-bottom:var(--sp-7)}
+.chip{min-height:44px;padding:0 var(--sp-5);border:1px solid var(--line-strong);border-radius:var(--radius-pill);background:transparent;color:var(--ink-2);font:inherit;font-size:var(--fs-ui);letter-spacing:.1em;cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.chip[hidden]{display:none}
 .chip:hover{border-color:var(--primary);color:var(--primary)}
-.chip:active{background:var(--primary-soft)}
+.chip:active{transform:translateY(1px)}
 .chip[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:var(--primary-ink);font-weight:700}
-.chip[aria-pressed="true"]::before{content:"✓";margin-right:var(--sp-2)}
-.works{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sp-6)}
-.work{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column}
-.work[hidden]{display:none}
-.cover{position:relative;aspect-ratio:16/10;background:var(--bg-2);display:grid;place-items:center}
-.cover img{width:100%;height:100%;object-fit:cover;display:block}
-.cover .tag{position:absolute;left:var(--sp-4);top:var(--sp-3);font-family:var(--en);font-size:var(--fs-label);font-weight:600;letter-spacing:.14em;color:var(--primary);background:var(--surface);border:1px solid var(--line);padding:2px 10px;border-radius:var(--radius)}
-.work-body{padding:var(--sp-5);display:flex;flex-direction:column;gap:var(--sp-3);flex:1}
-.work h3{font-size:var(--fs-h3);line-height:1.5}
-.work p{margin:0;color:var(--ink-2);font-size:var(--fs-body)}
-.work dl{margin:var(--sp-2) 0 0;padding-top:var(--sp-3);border-top:1px solid var(--line);display:grid;grid-template-columns:auto 1fr;gap:var(--sp-1) var(--sp-4);font-size:var(--fs-ui)}
-.work dt{color:var(--ink-3)}
-.work dd{margin:0}
-.work .more{display:inline-flex;align-items:center;align-self:flex-start;min-height:44px;margin-top:var(--sp-1);color:var(--primary);font-size:var(--fs-ui);font-weight:700;text-decoration:underline;text-underline-offset:3px}
-.work .more:active{color:var(--ink)}
-@media (max-width:640px){.works{grid-template-columns:1fr}}
 
-footer{background:var(--deep);color:var(--on-deep);border-top:1px solid var(--line-on-deep)}
-footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:var(--sp-3);padding-block:var(--sp-5);font-family:var(--en);font-size:var(--fs-label);letter-spacing:.08em;opacity:.6}
+/* 見本のカード */
+.works{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:var(--gap-col);row-gap:var(--sp-9)}
+.works:not(.filtered) .work:nth-child(even){margin-top:var(--sp-9)}
+.work{display:flex;flex-direction:column;gap:var(--sp-6)}
+.work[hidden]{display:none}
+.cover{position:relative;margin-right:var(--sp-4)}
+.cover::before{content:"";position:absolute;inset:16px -16px -16px 16px;border:1px solid var(--gold);pointer-events:none}
+.cover .frame{position:relative;aspect-ratio:16/10;overflow:hidden;border-radius:var(--radius);background:var(--bg-2)}
+.cover img{width:100%;height:100%;object-fit:cover;display:block}
+.work-body{display:flex;flex-direction:column;gap:var(--sp-3);flex:1;padding-top:var(--sp-2)}
+.work .tag{font-family:var(--en);font-size:var(--fs-label);font-weight:600;letter-spacing:.18em;color:var(--rose)}
+.work h3{font-size:var(--fs-h3)}
+.work p{margin:0;color:var(--ink-2)}
+.work dl{margin:var(--sp-2) 0 0;display:grid;grid-template-columns:auto 1fr;font-size:var(--fs-ui);border-top:1px solid var(--line)}
+.work dt,.work dd{padding:var(--sp-3) 0;border-bottom:1px solid var(--line)}
+.work dt{padding-right:var(--sp-5);color:var(--ink-3);white-space:nowrap}
+.work dd{margin:0;font-size:var(--fs-body)}
+.work .more{align-self:flex-start;display:inline-flex;align-items:center;gap:var(--sp-3);min-height:44px;margin-top:var(--sp-2);color:var(--primary);font-size:var(--fs-ui);font-weight:500;letter-spacing:.14em;border-bottom:1px solid currentColor;transition:color .2s}
+.work .more:hover{color:var(--rose)}
+.work .more:hover .arr{width:36px}
+.work .more:active{opacity:.7}
+@media (max-width:860px){.works{grid-template-columns:minmax(0,1fr);row-gap:var(--sp-8)}.works:not(.filtered) .work:nth-child(even){margin-top:0}}
+
+/* footer */
+footer{background:var(--deep-2);color:var(--on-deep)}
+footer .wrap{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:var(--sp-4);padding-block:var(--sp-7) var(--sp-6)}
+footer .logo .m-arch{stroke:var(--deep-accent)}
+footer .logo .m-a{fill:var(--deep-accent)}
+footer small{font-family:var(--en);font-size:var(--fs-label);letter-spacing:.1em}
 </style>
 </head>
 <body>
 <header class="site-head">
   <div class="wrap">
-    <a class="logo" href="#top"><i aria-hidden="true"></i>AI Workflow &amp; Content<small>Portfolio</small></a>
+    <a class="logo" href="#top"><svg viewBox="0 0 26 32" aria-hidden="true"><path class="m-arch" d="M1.5 31.5V13.5a11.5 11.5 0 0 1 23 0v18"/><text class="m-a" x="13" y="25.5" text-anchor="middle">A</text></svg>AI Workflow &amp; Content<small>Portfolio</small></a>
   </div>
 </header>
 
@@ -119,9 +158,9 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:var(-
   <section class="block" id="portfolio">
     <div class="wrap">
       <div class="sec-head">
-        <div><div class="label"><span class="num">01</span>Portfolio</div><h2><span class="ph">お渡しする形の</span><span class="ph">制作見本</span></h2></div>
+        <div class="sec-title"><p class="en"><span class="no">01</span>Portfolio</p><h2><span><span class="ph">お渡しする形の</span><span class="ph">制作見本</span></span></h2></div>
       </div>
-      <div class="filters" role="group" aria-label="種類で絞り込む">
+      <div class="filters" role="group" aria-label="種類で絞り込む" hidden>
         <button class="chip" data-f="all" aria-pressed="true">すべて</button>
         <button class="chip" data-f="app" aria-pressed="false">アプリ</button>
         <button class="chip" data-f="auto" aria-pressed="false">自動化</button>
@@ -131,77 +170,83 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:var(-
 
       <div class="works">
         <article class="work" data-cat="app">
-          <div class="cover"><img src="assets/skincare_cover.webp" alt="肌管理アプリの画面。カレンダー、グラフ、記録の3画面" width="1200" height="750" loading="lazy"><span class="tag">WEB APP</span></div>
+          <div class="cover"><div class="frame"><img src="assets/skincare_thumb.webp" alt="肌管理アプリの画面。カレンダー、グラフ、記録の3画面" width="1200" height="750" loading="lazy"></div></div>
           <div class="work-body">
+            <span class="tag">WEB APP</span>
             <h3><span class="ph">肌の記録と</span><span class="ph">振り返りアプリ</span></h3>
             <p>肌の調子・スキンケア・睡眠・食事を毎日記録し、どんな日に肌の調子がよかったかをグラフで振り返れるWebアプリです。自分用に企画から開発まで行いました。画面は架空のデータで表示しています。</p>
             <dl><dt>使用技術</dt><dd>HTML・CSS・JavaScript／Google Drive 連携（記録の引き継ぎ）</dd><dt>担当</dt><dd>企画・設計・開発・テスト</dd><dt>納品物</dt><dd>Webアプリ一式・使い方の手順書（設計書・動作確認の記録つき）</dd></dl>
-            <a class="more" href="cases/skincare.html">事例を見る</a>
+            <a class="more" href="cases/skincare.html">事例を見る <span class="arr" aria-hidden="true"></span></a>
           </div>
         </article>
         <article class="work" data-cat="app">
-          <div class="cover"><img src="assets/style-note_cover.webp" alt="ビューティーアドバイザーアプリの画面。早見表、メイク手順、AIに聞いた結果の3画面" width="1200" height="750" loading="lazy"><span class="tag">WEB APP</span></div>
+          <div class="cover"><div class="frame"><img src="assets/style-note_thumb.webp" alt="ビューティーアドバイザーアプリの画面。早見表、メイク手順、AIに聞いた結果の3画面" width="1200" height="750" loading="lazy"></div></div>
           <div class="work-body">
+            <span class="tag">WEB APP</span>
             <h3><span class="ph">服とメイクを選ぶ</span><span class="ph">ビューティー</span><span class="ph">アドバイザーアプリ</span></h3>
             <p>パーソナルカラー・骨格・顔タイプの診断結果を、毎日の服とメイク選びに使うためのWebアプリです。写真を撮って AI に聞くと、似合うかどうかと合わせ方がわかります。自分用に企画から開発まで行いました。画面は架空のデータで表示しています。</p>
             <dl><dt>使用技術</dt><dd>HTML・CSS・JavaScript／Claude API（AIの判定）</dd><dt>担当</dt><dd>企画・設計・開発・テスト</dd><dt>納品物</dt><dd>Webアプリ一式・使い方の手順書（設計書・動作確認の記録つき）</dd></dl>
-            <a class="more" href="cases/style-note.html">事例を見る</a>
+            <a class="more" href="cases/style-note.html">事例を見る <span class="arr" aria-hidden="true"></span></a>
           </div>
         </article>
         <article class="work" data-cat="app">
-          <div class="cover"><img src="assets/baby-care_cover.webp" alt="運営管理システムのダッシュボード。4つの数、業務の流れと役割分担の表、これからの案件と今日のタスク" width="1200" height="750" loading="lazy"><span class="tag">WEB APP</span></div>
+          <div class="cover"><div class="frame"><img src="assets/baby-care_thumb.webp" alt="運営管理システムのスマホ画面。ダッシュボード、シフト表、スタッフ手配の3画面" width="1200" height="750" loading="lazy"></div></div>
           <div class="work-body">
+            <span class="tag">WEB APP</span>
             <h3><span class="ph">イベント託児の</span><span class="ph">運営管理システム</span></h3>
             <p>問い合わせ・申込・スタッフの手配・常設託児室のシフト・実績・請求の準備までを、1つの流れで管理する業務Webアプリです。AIは整理と下書き、最終確認と判断は人が行う役割分担にしています。ポートフォリオ用の架空の案件で、画面は架空のデータで表示しています。</p>
-            <dl><dt>使用技術</dt><dd>HTML・CSS・JavaScript／Java・PostgreSQL・Claude API</dd><dt>担当</dt><dd>企画・設計・開発</dd><dt>納品物</dt><dd>Webアプリ一式・使い方マニュアル（PDF）（設計書・動作確認の記録つき）</dd></dl>
-            <a class="more" href="cases/baby-care.html">事例を見る</a>
+            <dl><dt>使用技術</dt><dd>画面: HTML・CSS・JavaScript／サーバー: Java／データベース: PostgreSQL／AI: Claude API</dd><dt>担当</dt><dd>企画・設計・開発</dd><dt>納品物</dt><dd>Webアプリ一式・使い方マニュアル（PDF）（設計書・動作確認の記録つき）</dd></dl>
+            <a class="more" href="cases/baby-care.html">事例を見る <span class="arr" aria-hidden="true"></span></a>
           </div>
         </article>
         <article class="work" data-cat="app">
-          <div class="cover"><img src="assets/diagnosis-sheet_cover.webp" alt="結果シート作成アプリの画面。結果の入力、色見本が並んだ結果シート、お客様に送る文の3画面" width="1200" height="750" loading="lazy"><span class="tag">WEB APP</span></div>
+          <div class="cover"><div class="frame"><img src="assets/diagnosis-sheet_thumb.webp" alt="結果シート作成アプリの画面。結果の入力、色見本が並んだ結果シート、お客様に送る文の3画面" width="1200" height="750" loading="lazy"></div></div>
           <div class="work-body">
+            <span class="tag">WEB APP</span>
             <h3><span class="ph">診断のあとに送る</span><span class="ph">結果シートの</span><span class="ph">作成アプリ</span></h3>
             <p>パーソナルカラーや骨格などの診断のあと、結果を選んで入力するだけで、お客様用の結果シートと送る文の下書きができるWebアプリです。シートはスマホで見やすく、PDFにも保存できます。ポートフォリオ用の架空の案件で、画面は架空のデータで表示しています。</p>
             <dl><dt>使用技術</dt><dd>HTML・CSS・JavaScript</dd><dt>担当</dt><dd>企画・設計・開発・テスト</dd><dt>納品物</dt><dd>Webアプリ一式（動作確認の記録つき）</dd></dl>
-            <a class="more" href="cases/diagnosis-sheet.html">事例を見る</a>
+            <a class="more" href="cases/diagnosis-sheet.html">事例を見る <span class="arr" aria-hidden="true"></span></a>
           </div>
         </article>
         <article class="work" data-cat="auto">
-          <div class="cover"><img src="assets/lecture-factory_cover.webp" alt="この仕組みで作った講義スライド4枚。表紙・表・カード・図の4種類が、同じデザインでそろっている" width="1200" height="750" loading="lazy"><span class="tag">AUTOMATION</span></div>
+          <div class="cover"><div class="frame"><img src="assets/lecture-factory_thumb.webp" alt="この仕組みで作った講義スライド4枚。表紙・表・カード・図の4種類が、同じデザインでそろっている" width="1200" height="750" loading="lazy"></div></div>
           <div class="work-body">
+            <span class="tag">AUTOMATION</span>
             <h3><span class="ph">AI講座の講義を</span><span class="ph">自動で作る仕組み</span></h3>
             <p>初心者向けのAI業務改善講座の講義を、AIが作り、受講者役のAIが点検し、直すところまで自動で回す仕組みです。スライド・台本・読み上げ音声つきの動画まで、121本の講義を作りました（受講者役の点検を通したのは、そのうち72本です）。自分の講座のために企画から開発まで行いました。</p>
             <dl><dt>使用技術</dt><dd>Python・Node.js／Claude API／ElevenLabs（読み上げ音声）</dd><dt>担当</dt><dd>企画・設計・開発</dd><dt>納品物</dt><dd>仕組み一式・使い方の手順書（出力のサンプルつき）</dd></dl>
-            <a class="more" href="cases/lecture-factory.html">事例を見る</a>
+            <a class="more" href="cases/lecture-factory.html">事例を見る <span class="arr" aria-hidden="true"></span></a>
           </div>
         </article>
         <article class="work" data-cat="auto">
-          <div class="cover"><img src="assets/ai-manager_cover.webp" alt="スマホで見たレポートの3画面。今日やったこと、各担当で今日行ったこと、確認・承認が欲しい内容" width="1200" height="750" loading="lazy"><span class="tag">AUTOMATION</span></div>
+          <div class="cover"><div class="frame"><img src="assets/ai-manager_thumb.webp" alt="スマホで見たレポートの3画面。今日やったこと、各担当で今日行ったこと、確認・承認が欲しい内容" width="1200" height="750" loading="lazy"></div></div>
           <div class="work-body">
+            <span class="tag">AUTOMATION</span>
             <h3><span class="ph">AIのマネージャーと</span><span class="ph">5つの担当で</span><span class="ph">業務を回す仕組み</span></h3>
             <p>毎朝・毎晩の決まった時刻に、AIのマネージャーが5つの担当（調べもの・営業・コンテンツ・ブログ・制作）に仕事を振り、結果を1枚のレポートにまとめる仕組みです。公開・送信・削除は人が行います。自分の事業のために企画から作り、運用しています。画面は架空のデータで表示しています。</p>
             <dl><dt>使用技術</dt><dd>Claude Code／Googleカレンダー・Gmail 連携（読む・下書きまで）</dd><dt>担当</dt><dd>企画・設計・運用</dd><dt>納品物</dt><dd>設定一式・運用の手順書（日報とレポートのひな形つき）</dd></dl>
-            <a class="more" href="cases/ai-manager.html">事例を見る</a>
+            <a class="more" href="cases/ai-manager.html">事例を見る <span class="arr" aria-hidden="true"></span></a>
           </div>
         </article>
       </div>
     </div>
   </section>
-
 </main>
-<footer><div class="wrap"><span>© 2026 AI Workflow &amp; Content</span><span>All rights reserved.</span></div></footer>
+<footer><div class="wrap"><a class="logo" href="#top"><svg viewBox="0 0 26 32" aria-hidden="true"><path class="m-arch" d="M1.5 31.5V13.5a11.5 11.5 0 0 1 23 0v18"/><text class="m-a" x="13" y="25.5" text-anchor="middle">A</text></svg>AI Workflow &amp; Content</a><small>© 2026 AI Workflow &amp; Content　All rights reserved.</small></div></footer>
 
 <script>
 (function(){
-  var chips=document.querySelectorAll('.chip'),works=document.querySelectorAll('.work');
+  var chips=document.querySelectorAll('.chip'),list=document.querySelector('.works'),works=document.querySelectorAll('.work');
   var cats={};works.forEach(function(w){cats[w.dataset.cat]=1});
-  if(Object.keys(cats).length<2)document.querySelector('.filters').hidden=true;
+  document.querySelector('.filters').hidden=Object.keys(cats).length<2;
   chips.forEach(function(c){
     var f=c.dataset.f;
     if(f!=='all'&&!document.querySelector('.work[data-cat="'+f+'"]'))c.hidden=true;
     c.addEventListener('click',function(){
       chips.forEach(function(x){x.setAttribute('aria-pressed',x===c?'true':'false')});
       works.forEach(function(w){w.hidden=!(f==='all'||w.dataset.cat===f)});
+      list.classList.toggle('filtered',f!=='all');
     });
   });
 })();
