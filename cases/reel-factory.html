@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'none'; style-src 'unsafe-inline'; font-src 'self'; img-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>リール動画を台本から投稿準備までAIと回す仕組み｜AI Workflow Portfolio</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<style>
+/* 書体: assets/ に使う文字だけを切り出したもの（外への通信なし）。太さの範囲を広げて、ない太さを無理に太らせないようにしている */
+@font-face{font-family:"Zen Kaku Gothic New";src:url("../assets/zenkaku-regular.woff2") format("woff2");font-weight:400 500;font-display:swap}
+@font-face{font-family:"Zen Kaku Gothic New";src:url("../assets/zenkaku-bold.woff2") format("woff2");font-weight:600 700;font-display:swap}
+@font-face{font-family:"Shippori Mincho";src:url("../assets/shippori-medium.woff2") format("woff2");font-weight:400 700;font-display:swap}
+@font-face{font-family:"Cormorant Garamond";src:url("../assets/cormorant.woff2") format("woff2");font-weight:300 700;font-style:normal;font-display:swap}
+@font-face{font-family:"Cormorant Garamond";src:url("../assets/cormorant-italic.woff2") format("woff2");font-weight:300 700;font-style:italic;font-display:swap}
+
+:root{
+  /* 色: アイボリー × モカ × くすみローズ（2026-10-04。トップと同じ） */
+  --bg:#FAF7F3;
+  --bg-2:#F2ECE5;
+  --blush:#F5EBE7;
+  --surface:#FFFFFF;
+  --ink:#3B3230;
+  --ink-2:#5E524D;
+  --ink-3:#74675F;
+  --line:#E4DAD2;
+  --line-strong:#948072;
+  --gold:#B89A6E;
+  --gold-ink:#82663D;
+  --primary:#7E6357;
+  --primary-hover:#654E44;
+  --primary-ink:#FFFFFF;
+  --rose:#96594F;
+  --rose-soft:#E9D3CC;
+  --deep:#4A3C36;
+  --deep-2:#3E322D;
+  --on-deep:#F6EFE9;
+  --deep-accent:#D9BFA9;
+  --deep-line:rgba(246,239,233,.24);
+  --shadow-device:0 16px 36px rgba(74,60,54,.14);
+  /* 書体 */
+  --mincho:"Shippori Mincho","Yu Mincho","YuMincho","Hiragino Mincho ProN",serif;
+  --sans:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
+  --en:"Cormorant Garamond","Times New Roman",serif;
+  /* 文字の大きさ */
+  --fs-display:clamp(28px,3.6vw,44px);
+  --fs-en:clamp(34px,4.4vw,52px);
+  --fs-h2:clamp(22px,2.4vw,28px);
+  --fs-h3:19px;
+  --fs-body:16px;
+  --fs-ui:14px;
+  --fs-note:12px;
+  --fs-label:15px;
+  --fs-num:20px;     /* 番号「01」・Case。トップと事例ページで同じ大きさ */   /* 英字のラベル */
+  --fs-lead:17px;    /* 明朝の小見出し・声 */
+  /* 余白 */
+  --sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:24px;--sp-6:32px;--sp-7:48px;--sp-8:72px;--sp-9:120px;
+  --sp-section:clamp(72px,9vw,120px);
+  /* 角丸 */
+  --radius:2px;
+  --radius-pill:999px;
+  --radius-device:20px;
+  --max:1080px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1E1916;--bg-2:#26201C;--blush:#2E2421;--surface:#2A231F;--ink:#F0E7E0;--ink-2:#CDBFB5;--ink-3:#AE9F95;
+    --line:#3D332E;--line-strong:#86766B;--gold:#A88D66;--gold-ink:#D2B68A;--primary:#D8BCAB;--primary-hover:#E8D2C4;--primary-ink:#1E1916;
+    --rose:#E3AEA4;--rose-soft:#4B3631;--deep:#15110F;--deep-2:#100D0B;--on-deep:#F0E7E0;--deep-accent:#D9BFA9;--deep-line:rgba(240,231,224,.2);
+    --shadow-device:0 16px 36px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1E1916;--bg-2:#26201C;--blush:#2E2421;--surface:#2A231F;--ink:#F0E7E0;--ink-2:#CDBFB5;--ink-3:#AE9F95;
+  --line:#3D332E;--line-strong:#86766B;--gold:#A88D66;--gold-ink:#D2B68A;--primary:#D8BCAB;--primary-hover:#E8D2C4;--primary-ink:#1E1916;
+  --rose:#E3AEA4;--rose-soft:#4B3631;--deep:#15110F;--deep-2:#100D0B;--on-deep:#F0E7E0;--deep-accent:#D9BFA9;--deep-line:rgba(240,231,224,.2);
+  --shadow-device:0 16px 36px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:var(--fs-body);line-height:1.85;letter-spacing:.05em;font-variant-numeric:lining-nums;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+a:focus-visible{outline:2px solid var(--rose);outline-offset:4px}
+footer a:focus-visible{outline-color:var(--deep-accent)}
+img{max-width:100%}
+p,dd,li{text-wrap:pretty}
+.wrap{max-width:var(--max);margin:0 auto;padding-inline:clamp(16px,5vw,56px)}
+h1,h2,h3,.deliver dt,.sysmap figcaption{font-family:var(--mincho);font-weight:500;line-height:1.5;letter-spacing:.08em;font-feature-settings:"palt";text-wrap:balance;word-break:auto-phrase;margin:0}
+.ph{display:inline-block}
+
+/* 矢印（細い線） */
+.arr{position:relative;display:inline-block;flex:none;width:28px;height:1px;background:currentColor;transition:width .2s}
+.arr::after{content:"";position:absolute;right:0;top:0;width:8px;height:1px;background:currentColor;transform:rotate(35deg);transform-origin:right center}
+.arr.rev{transform:scaleX(-1)}
+
+/* ボタン・リンク */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--sp-4);min-height:56px;padding:0 var(--sp-6);border:1px solid var(--primary);border-radius:var(--radius);color:var(--primary);font-size:var(--fs-ui);font-weight:500;letter-spacing:.14em;white-space:nowrap;transition:background .2s,color .2s,border-color .2s}
+.btn:hover{background:var(--primary);color:var(--primary-ink)}
+.btn:hover .arr{width:36px}
+.btn:active{transform:translateY(1px)}
+.btn.solid{background:var(--primary);color:var(--primary-ink)}
+.btn.solid:hover{background:var(--primary-hover);border-color:var(--primary-hover)}
+.back{display:inline-flex;align-items:center;gap:var(--sp-3);min-height:44px;color:var(--ink-2);font-size:var(--fs-ui);font-weight:500;letter-spacing:.12em;border-bottom:1px solid var(--line-strong);transition:color .2s,border-color .2s}
+.back:hover{color:var(--rose);border-color:var(--rose)}
+.back:active{opacity:.7}
+
+/* header */
+.site-head{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 95%,transparent);border-bottom:1px solid var(--line)}
+.site-head .wrap{display:flex;align-items:center;height:80px}
+.logo{display:flex;align-items:center;gap:var(--sp-3);min-height:44px;white-space:nowrap;font-family:var(--en);font-weight:600;font-size:21px;letter-spacing:.06em;line-height:1.2}
+.logo svg{flex:none;width:26px;height:32px}
+.logo .m-arch{fill:none;stroke:var(--gold-ink);stroke-width:1.3}
+.logo .m-a{font-family:var(--en);font-style:italic;font-weight:600;font-size:17px;fill:var(--rose)}
+.logo:active{opacity:.7}
+@media (max-width:900px){.site-head .wrap{height:64px}.logo{font-size:18px}}
+@media (max-width:359px){.site-head .logo{white-space:normal}}
+@media (max-width:480px){.site-head .wrap{gap:var(--sp-3)}.site-head .logo{gap:var(--sp-2);font-size:16px;letter-spacing:.02em}.site-head .btn{padding:0 var(--sp-4);letter-spacing:.06em}}
+
+/* intro */
+.intro{padding-block:clamp(40px,6vw,80px) clamp(72px,9vw,120px)}
+.case-label{display:flex;align-items:center;gap:var(--sp-4);margin:var(--sp-7) 0 0;font-family:var(--en);font-style:italic;font-size:var(--fs-num);letter-spacing:.08em;color:var(--rose)}
+.case-label::after{content:"";width:48px;height:1px;background:var(--gold)}
+.intro h1{margin-top:var(--sp-4);font-size:var(--fs-display);line-height:1.5;letter-spacing:.1em}
+.intro .lead{margin:var(--sp-5) 0 0;max-width:40em;color:var(--ink-2)}
+.demo{margin:var(--sp-3) 0 0}
+.demo .back{color:var(--primary)}
+.cover{position:relative;max-width:920px;margin:var(--sp-7) 16px 0 0}
+.cover::before{content:"";position:absolute;inset:16px -16px -16px 16px;border:1px solid var(--gold);pointer-events:none}
+.cover .frame{position:relative;overflow:hidden;border-radius:var(--radius);background:var(--bg-2)}
+.cover img{display:block;width:100%;height:auto}
+.meta{max-width:920px;margin:var(--sp-8) 0 0;display:grid;grid-template-columns:auto 1fr;font-size:var(--fs-ui);border-top:1px solid var(--line)}
+.meta dt,.meta dd{padding:var(--sp-3) 0;border-bottom:1px solid var(--line)}
+.meta dt{padding-right:var(--sp-6);color:var(--ink-3);white-space:nowrap}
+.meta dd{margin:0;font-size:var(--fs-body);max-width:38em}
+
+/* sections */
+section.block{padding-block:var(--sp-section)}
+section.alt{background:var(--bg-2)}
+.sec-title{margin-bottom:var(--sp-7)}
+.sec-title .en{margin:0;display:flex;align-items:baseline;gap:var(--sp-4);font-family:var(--en);font-size:var(--fs-en);font-weight:500;line-height:1.3;letter-spacing:.03em}
+.sec-title .en .no{font-size:var(--fs-num);font-style:italic;color:var(--rose);letter-spacing:.06em}
+.sec-title h2{display:flex;align-items:center;gap:var(--sp-4);margin-top:var(--sp-2);font-size:var(--fs-h2)}
+.sec-title h2::before{content:"";flex:none;width:32px;height:1px;background:var(--gold)}
+.problem{max-width:40em}
+.problem p{margin:0 0 var(--sp-4)}
+.problem .voice{margin:0 0 var(--sp-6);padding:var(--sp-2) 0 var(--sp-2) var(--sp-5);border-left:1px solid var(--gold);font-family:var(--mincho);font-size:var(--fs-lead);line-height:1.9;letter-spacing:.06em}
+.problem p.goal{font-weight:700}
+.features{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-8) var(--sp-7);margin:0;padding:0;list-style:none}
+.features figure{margin:0}
+.features img{display:block;width:100%;height:auto;max-width:260px;margin:0 auto;border-radius:var(--radius-device);background:var(--surface);box-shadow:var(--shadow-device)}
+.features figcaption{margin-top:var(--sp-6)}
+.features h3{font-size:var(--fs-h3)}
+.features p{margin:var(--sp-3) 0 0;color:var(--ink-2)}
+@media (max-width:760px){.features{grid-template-columns:1fr}}
+.features + .note{margin-top:var(--sp-7)}
+.note{max-width:40em;margin:var(--sp-5) 0 0;color:var(--ink-3)}
+.deliver{margin:0;max-width:44em;border-top:1px solid var(--line)}
+.deliver div{padding:var(--sp-5) 0;border-bottom:1px solid var(--line)}
+.deliver dt{font-size:var(--fs-lead);font-weight:600;letter-spacing:.06em}
+.deliver dd{margin:var(--sp-2) 0 0;color:var(--ink-2)}
+.steps{margin:0;padding:0;list-style:none;border-top:1px solid var(--line)}
+.steps li{display:grid;grid-template-columns:minmax(0,18em) minmax(0,1fr);gap:var(--sp-2) var(--sp-7);padding:var(--sp-5) 0;border-bottom:1px solid var(--line)}
+.steps h3{font-size:var(--fs-lead);font-weight:600;letter-spacing:.06em}
+.steps .how{margin:var(--sp-2) 0 0;color:var(--ink-3)}
+.steps p{margin:0;color:var(--ink-2);max-width:40em}
+@media (max-width:640px){.steps li{grid-template-columns:1fr}}
+.list{margin:0;padding-left:1.2em;max-width:40em}
+.list li{margin-bottom:var(--sp-3);padding-left:var(--sp-1)}
+.list li::marker{color:var(--rose)}
+/* システム構成図 */
+.sysmap{margin:var(--sp-7) 0 0;max-width:560px}
+.sysmap figure{margin:0;padding:var(--sp-5);border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
+.sysmap figcaption{margin-bottom:var(--sp-4);font-family:var(--mincho);font-weight:600}
+.sysmap figcaption small{margin-left:var(--sp-2);font-family:var(--sans);font-size:var(--fs-ui);font-weight:400;color:var(--ink-3)}
+.sysmap ol{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:var(--sp-2)}
+.sysmap li{padding:var(--sp-3) var(--sp-4);border:1px solid var(--line-strong);border-radius:var(--radius);background:var(--bg);font-size:var(--fs-ui);line-height:1.6}
+.sysmap li b{display:block}
+.sysmap li span{color:var(--ink-2)}
+.sysmap li.to::before{content:"↓ ";color:var(--gold-ink)}
+
+/* 戻る */
+.foot-back{padding-block:var(--sp-7) var(--sp-8)}
+/* footer */
+footer{background:var(--deep-2);color:var(--on-deep)}
+footer .wrap{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:var(--sp-4);padding-block:var(--sp-7) var(--sp-6)}
+footer .logo .m-arch{stroke:var(--deep-accent)}
+footer .logo .m-a{fill:var(--deep-accent)}
+footer small{font-family:var(--en);font-size:var(--fs-label);letter-spacing:.1em}
+
+/* 02 だけの部品 */
+.logo small{margin-left:var(--sp-2);font-style:italic;font-weight:500;font-size:var(--fs-lead);color:var(--rose);letter-spacing:.08em}
+.features.wide{grid-template-columns:1fr;gap:var(--sp-8)}
+.features.wide figure{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:var(--sp-7);align-items:center}
+.features.wide img{max-width:none;border-radius:var(--radius)}
+.features.wide figcaption{margin-top:0}
+@media (max-width:760px){.features.wide figure{grid-template-columns:1fr;gap:var(--sp-5)}}
+</style>
+</head>
+<body>
+<header class="site-head">
+  <div class="wrap">
+    <a class="logo" href="../index.html#portfolio"><svg viewBox="0 0 26 32" aria-hidden="true"><path class="m-arch" d="M1.5 31.5V13.5a11.5 11.5 0 0 1 23 0v18"/><text class="m-a" x="13" y="25.5" text-anchor="middle">A</text></svg>AI Workflow &amp; Content<small>Portfolio</small></a>
+  </div>
+</header>
+
+<main>
+  <section class="intro">
+    <div class="wrap">
+        <a class="back" href="../index.html#portfolio"><span class="arr rev" aria-hidden="true"></span>ポートフォリオへ戻る</a>
+        <p class="case-label">Case</p>
+        <h1><span class="ph">リール動画を、</span><span class="ph">台本から</span><span class="ph">投稿準備まで</span><span class="ph">AIと回す仕組み</span></h1>
+        <p class="lead">週1本のリール動画を続けるために、台本・読み上げ音声・動画サービスへの指示文・テロップ原稿までをAIが下書きし、人は操作と最終確認に集中できるようにした仕組みです。投稿は自動にせず、必ず人が確認してから行います。自分の発信のために企画から作り、運用しています。</p>
+        <div class="cover"><div class="frame"><img src="../assets/reel-factory_thumb.webp" alt="この仕組みで使う3つの画面。リール1本ができるまでの7工程、台本の表、撮影キット" width="1200" height="750"></div></div>
+        <dl class="meta"><dt>種類</dt><dd>業務の自動化（AIが下書きする工程と、人が確認する工程を分けた仕組み）</dd><dt>担当</dt><dd>企画・設計・運用</dd><dt>使用技術</dt><dd>Claude Code（台本・指示文の下書き）／ElevenLabs（読み上げ音声）／HeyGen（アバター動画）／CapCut・HyperFrames（編集）</dd><dt>納品物</dt><dd>工程の手順書・台本と撮影キットのひな形（記入例つき）</dd></dl>
+    </div>
+  </section>
+
+  <section class="block alt">
+    <div class="wrap">
+        <div class="sec-title"><p class="en"><span class="no">01</span>Problem</p><h2>困りごと</h2></div>
+        <div class="problem"><p class="voice">「動画を毎週出したいのに、台本・音声・動画づくり・編集と工程が多い。1本ごとに手順を思い出すだけで時間がかかって、続かなくなるのがいちばん困る。」</p><p class="goal">そこで、工程を7つに分け、AIが下書きできるところはAIに任せ、人は動画サービスの操作・編集・最終確認・投稿だけを行う形を目指しました。</p></div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+        <div class="sec-title"><p class="en"><span class="no">02</span>Features</p><h2>作ったもの</h2></div>
+        <ul class="features wide">
+          <li><figure><img src="../assets/reel-factory_flow.webp" alt="リール1本ができるまでの7工程。ネタを決める、台本を作る、読み上げ音声を作る、アバター動画を作る、スマホで一次編集、テロップを入れる、効果音をつけて投稿。それぞれにAIか人かの札がついている" width="1200" height="750" loading="lazy"><figcaption><h3><span class="ph">工程を7つに分けて、</span><span class="ph">担当を決める</span></h3><p>ネタが決まってから投稿までの流れを、7つの工程にしました。それぞれ、AIが下書きするか、人が操作・確認するかを決めてあります。手順書の順に進めれば、毎回迷いません。</p></figcaption></figure></li>
+          <li><figure><img src="../assets/reel-factory_script.webp" alt="台本の表。フックの一文と、時間・台詞・画面と撮影内容・テロップ案の4列で、シーンごとに書かれている" width="1200" height="750" loading="lazy"><figcaption><h3><span class="ph">台本は</span><span class="ph">決まった表で作る</span></h3><p>フック（最初の数秒）の案を比べて選び、シーンごとに台詞・画面・テロップ案を表にします。表の形が毎回同じなので、あとの工程（音声・動画・文字入れ）にそのまま渡せます。</p></figcaption></figure></li>
+          <li><figure><img src="../assets/reel-factory_kit.webp" alt="撮影キットのチェックリスト。撮る順番、ダミー資料、動画サービスへの指示文、テロップ原稿と編集の指示、カバーの文字。右に動画サービスへの指示文の一部" width="1200" height="750" loading="lazy"><figcaption><h3><span class="ph">動画づくりの前に、</span><span class="ph">撮影キットをそろえる</span></h3><p>撮る順番・ダミー資料・動画サービスへの指示文・テロップ原稿と編集の指示・カバーの文字を、1か所にそろえます。AIが下書きし、人は動画サービスやスマホの編集アプリを操作するだけにします。</p></figcaption></figure></li>
+        </ul>
+        <p class="note">画面は、実際の台本と撮影キットの一部を抜き出して、見やすく並べ直したものです。</p>
+    </div>
+  </section>
+
+  <section class="block alt">
+    <div class="wrap">
+        <div class="sec-title"><p class="en"><span class="no">03</span>Ideas</p><h2>工夫したこと</h2></div>
+        <dl class="deliver"><div><dt><span class="ph">最終確認は</span><span class="ph">必ず人が行う</span></dt><dd>投稿は自動にしません。公開の前に、人が動画を見て確かめてから投稿します。</dd></div><div><dt><span class="ph">読み方を</span><span class="ph">そろえる</span></dt><dd>読み上げ音声は、数字や英字（例: AI・URL）を読みやすい形に置きかえた写しで作ります。台本とテロップは、元の表記のままにします。</dd></div><div><dt><span class="ph">続けるために、</span><span class="ph">作業を増やさない</span></dt><dd>止まった発信はゼロ点なので、完璧な1本より、続けられる1本を優先します。迷ったら、人の負担が軽いほうを選びます。</dd></div></dl>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+        <div class="sec-title"><p class="en"><span class="no">04</span>Process</p><h2>進め方</h2></div>
+        <p class="note" style="margin:0 0 var(--sp-4)">どの仕組みも、次の5つの観点で整理して作っています。</p>
+        <ol class="steps">
+          <li><div><h3>目的から決める</h3><p class="how">だれが・いつ・何のために使うかを先に決め、「どうなれば完成か」を1つずつ言葉にする</p></div><p>「週1本を、無理なく続ける」を最優先に決め、AIに任せる工程と人が行う工程の分け方も、この基準で決めました。</p></li>
+          <li><div><h3>続けられる使いやすさ</h3><p class="how">使う人が無理なく続けられる分量と読みやすさを、先に決める</p></div><p>工程ごとにチェック項目を書いた手順書を用意し、迷ったらその順に進めれば1本できる形にしています。</p></li>
+          <li><div><h3>データの安全</h3><p class="how">どのデータをどこへ送ってよいかを先に決め、それ以外には送らない</p></div><p>外のサービスに送るのは、台本の文と、動画の指示文だけです。画面に出す資料はダミーにし、お客様の情報は入れません。</p></li>
+          <li><div><h3>壊さない・失わない</h3><p class="how">直しても崩れない作りにし、前の状態に戻せるようにする</p></div><p>台本を作り直すときは、前の版を残します。素材のファイルは日付とテーマ名のフォルダに置き、進み具合は1つの一覧で管理しています。</p></li>
+          <li><div><h3>使いながら育てる</h3><p class="how">実際に使い、気づいた所を直す</p></div><p>アバター動画は、画像づくりと動画づくりの2段階から、動画サービス1つに一本化しました。使いながら、工程を減らしています。</p></li>
+        </ol>
+    </div>
+  </section>
+
+  <section class="block alt">
+    <div class="wrap">
+        <div class="sec-title"><p class="en"><span class="no">05</span>Security &amp; Data</p><h2>安全とデータの扱い</h2></div>
+        <ul class="list">
+          <li>AI（Claude Code）への依頼と、動画・音声のサービスに送るのは、台本の文と、動画の見た目・動きの指示文だけです。</li>
+          <li>画面に出す資料は、架空のデータ（ダミー）にします。お客様の写真や個人の情報は入れません。</li>
+          <li>投稿は自動にしません。公開の前に、必ず人が確認します。</li>
+          <li>AI の下書きは参考として使い、台本の最終的な確認は人が行います。</li>
+        </ul>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+        <div class="sec-title"><p class="en"><span class="no">06</span>Deliverables</p><h2>納品物のイメージ</h2></div>
+        <dl class="deliver"><div><dt>工程の手順書</dt><dd>リサーチから投稿までの7つの工程と、各工程でやることのチェック項目です</dd></div><div><dt>台本と撮影キットのひな形</dt><dd>表の形・書く項目・記入例です。AI への指示文のひな形もお付けします</dd></div></dl>
+        <p class="note">見本の仕組みは自分用のため、一部そろっていない資料もあります。</p>
+    </div>
+  </section>
+
+  <div class="wrap foot-back"><a class="back" href="../index.html#portfolio"><span class="arr rev" aria-hidden="true"></span>ポートフォリオへ戻る</a></div>
+</main>
+<footer>
+  <div class="wrap">
+    <a class="logo" href="../index.html#portfolio"><svg viewBox="0 0 26 32" aria-hidden="true"><path class="m-arch" d="M1.5 31.5V13.5a11.5 11.5 0 0 1 23 0v18"/><text class="m-a" x="13" y="25.5" text-anchor="middle">A</text></svg>AI Workflow &amp; Content</a>
+    <small>© 2026 AI Workflow &amp; Content　All rights reserved.</small>
+  </div>
+</footer>
+</body>
+</html>
