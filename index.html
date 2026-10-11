@@ -138,6 +138,18 @@ section.block{padding-block:var(--sp-section)}
 .work .more:active{opacity:.7}
 @media (max-width:860px){.works{grid-template-columns:minmax(0,1fr);row-gap:var(--sp-8)}}
 
+/* 使い方の例（02 Use cases） */
+section.alt{background:var(--bg-2)}
+.uses{max-width:920px;margin:0;padding:0;list-style:none;border-top:1px solid var(--line-strong)}
+.use{display:flex;flex-direction:column;gap:var(--sp-3);padding:var(--sp-6) 0;border-bottom:1px solid var(--line)}
+.use .kind{font-size:var(--fs-ui);letter-spacing:.1em;color:var(--rose)}
+.use h3{font-size:var(--fs-h3)}
+.use p{margin:0;max-width:40em;color:var(--ink-2)}
+.use .more{align-self:flex-start;display:inline-flex;align-items:center;gap:var(--sp-3);min-height:44px;margin-top:var(--sp-2);color:var(--primary);font-size:var(--fs-ui);font-weight:500;letter-spacing:.14em;border-bottom:1px solid currentColor;transition:color .2s}
+.use .more:hover{color:var(--rose)}
+.use .more:hover .arr{width:36px}
+.use .more:active{opacity:.7}
+
 /* footer */
 footer{background:var(--deep-2);color:var(--on-deep)}
 footer .wrap{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:var(--sp-4);padding-block:var(--sp-7) var(--sp-6)}
@@ -239,6 +251,21 @@ footer small{font-family:var(--en);font-size:var(--fs-label);letter-spacing:.1em
           </div>
         </article>
       </div>
+    </div>
+  </section>
+  <section class="block alt" id="usecases">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="sec-title"><p class="en"><span class="no">02</span>Use cases</p><h2><span><span class="ph">業務での</span><span class="ph">AIの使い方の例</span></span></h2></div>
+      </div>
+      <ul class="uses">
+        <li class="use">
+          <span class="kind">集めてまとめる</span>
+          <h3><span class="ph">現場から本部への報告を、</span><span class="ph">手で集計しない</span></h3>
+          <p>事業所から毎週届く報告を、AIとプログラムで一覧にまとめ、出ていない事業所へのお願いの文まで下書きする使い方です。実際に動かした画面と、AIへの頼み方（プロンプト）の全文を載せています。</p>
+          <a class="more" href="usecases/reports.html">使い方を見る <span class="arr" aria-hidden="true"></span></a>
+        </li>
+      </ul>
     </div>
   </section>
 </main>
