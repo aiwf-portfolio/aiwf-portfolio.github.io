@@ -170,7 +170,7 @@ footer small{font-family:var(--en);font-size:var(--fs-label);letter-spacing:.1em
       <dl class="meta">
         <dt>型</dt><dd>集めてまとめる</dd>
         <dt>向いている所</dt><dd>介護・福祉などで、事業所をいくつか運営している法人の本部</dd>
-        <dt>使う道具</dt><dd>入力フォーム／表計算ソフト／つなぎのプログラム／AI（例：Gemini、Claude）</dd>
+        <dt>使う道具</dt><dd>AI（例：Claude のプロジェクト機能）／集計のプログラム／表のファイル（事業所の名簿・先週の一覧）</dd>
         <dt>人がすること</dt><dd>報告を入れる（事業所）・確かめて送る（本部）</dd>
       </dl>
     </div>
@@ -195,9 +195,9 @@ footer small{font-family:var(--en);font-size:var(--fs-label);letter-spacing:.1em
         <li><span class="who ai">AI</span>読む・書くを手伝う部分</li>
       </ul>
       <ol class="steps">
-        <li><div><h3>事業所が報告する</h3><p>入力フォームで、選ぶ・数字を入れるだけにします。今のチャットのまま、文章で送っていただく形にもできます。</p></div><span class="who">人</span></li>
+        <li><div><h3>事業所が報告する</h3><p>今のチャットのまま、文章で送っていただきます。書き方は、そろっていなくてかまいません。</p></div><span class="who">人</span></li>
         <li><div><h3>文章の報告を、表の形に直す</h3><p>書き方がばらばらの文から、事業所名・済んだ件数・残り・理由を読み取ります。</p></div><span class="who ai">AI</span></li>
-        <li><div><h3>一覧にまとめて数える</h3><p>表計算ソフトに1行ずつ足し、合計や割合を出します。数えるところは、AIに任せません。</p></div><span class="who pg">プログラム</span></li>
+        <li><div><h3>合計を出す</h3><p>AIが作った表のファイルを、プログラムが読んで合計を出します。数えるところは、AIに任せません。</p></div><span class="who pg">プログラム</span></li>
         <li><div><h3>出ていない事業所を拾う</h3><p>事業所の名簿と突き合わせて、期限までに報告がない所を一覧にします。</p></div><span class="who pg">プログラム</span></li>
         <li><div><h3>お願いの文を下書きする</h3><p>事業所ごとに、前の週の様子もふまえた文を作ります。</p></div><span class="who ai">AI</span></li>
         <li><div><h3>週のまとめを下書きする</h3><p>一覧から、全体の様子・先週との違い・気をつけたい事業所を、短くまとめます。</p></div><span class="who ai">AI</span></li>
@@ -309,7 +309,7 @@ footer small{font-family:var(--en);font-size:var(--fs-label);letter-spacing:.1em
       <div class="sec-title"><p class="en"><span class="no">04</span>Roles</p><h2><span><span class="ph">任せること、</span><span class="ph">任せないこと</span></span></h2></div>
       <div class="cols">
         <div><h3><span class="who ai">AI</span>読む・書く</h3><ul><li>文章から項目を読み取る</li><li>お願いの文を下書きする</li><li>週のまとめを下書きする</li></ul><p class="why">書き方がばらばらでも読めて、相手に合わせた文が作れるためです。</p></div>
-        <div><h3><span class="who pg">プログラム</span>数える・拾う</h3><ul><li>一覧に足す</li><li>合計や割合を出す</li><li>出ていない事業所を拾う</li></ul><p class="why">毎回、同じ答えになる必要があるところです。AIには任せません。</p></div>
+        <div><h3><span class="who pg">プログラム</span>数える・拾う</h3><ul><li>合計を出す</li><li>出ていない事業所を拾う</li><li>表の数字が合っているか確かめる</li></ul><p class="why">毎回、同じ答えになる必要があるところです。AIには任せません。</p></div>
         <div><h3><span class="who">人</span>確かめる・決める</h3><ul><li>下書きを読んで直す</li><li>送る</li><li>気になる事業所への対応を決める</li></ul><p class="why">相手との関係に関わるところは、人が行います。</p></div>
       </div>
     </div>
@@ -319,7 +319,7 @@ footer small{font-family:var(--en);font-size:var(--fs-label);letter-spacing:.1em
     <div class="wrap">
       <div class="sec-title"><p class="en"><span class="no">05</span>Tools &amp; Data</p><h2><span><span class="ph">使う道具と、</span><span class="ph">データの扱い</span></span></h2></div>
       <dl class="deliver">
-        <div><dt>使う道具</dt><dd>入力フォーム、表計算ソフト、つなぎのプログラム、AI（例：Gemini、Claude）を使います。今お使いのチャットや表に合わせて組みます。</dd></div>
+        <div><dt>使う道具</dt><dd>AI（例：Claude のプロジェクト機能）、集計のプログラム、表のファイル（事業所の名簿・先週の一覧）を使います。決まりと資料は、最初にプロジェクトへ入れておきます。</dd></div>
         <div><dt>毎週の頼み方</dt><dd>決まりは、最初に1回だけAIのプロジェクトに書いておきます。毎週は、今週の報告を渡して、ひと言で頼むだけです。</dd></div>
         <div><dt>扱うもの</dt><dd>事業所ごとの件数、済んだ数、報告した日、理由の短い文です。</dd></div>
         <div><dt>扱わないもの</dt><dd>利用者さんのお名前、契約の内容、請求の数字は扱いません。報告の欄にも書かない形にします。</dd></div>
