@@ -133,12 +133,13 @@ section.alt{background:var(--bg-2)}
 
 /* 分担・道具・データ */
 .cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-6);max-width:920px}
+.cols.two{grid-template-columns:repeat(2,minmax(0,1fr))}
 .cols > div{padding-top:var(--sp-4);border-top:1px solid var(--line-strong)}
 .cols h3{font-size:var(--fs-h3);display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-3)}
 .cols ul{margin:var(--sp-3) 0 0;padding:0;list-style:none}
 .cols li{padding:var(--sp-2) 0;border-bottom:1px solid var(--line);color:var(--ink-2)}
 .cols .why{margin:var(--sp-3) 0 0;font-size:var(--fs-ui);color:var(--ink-3)}
-@media (max-width:760px){.cols{grid-template-columns:1fr;gap:var(--sp-5)}}
+@media (max-width:760px){.cols,.cols.two{grid-template-columns:1fr;gap:var(--sp-5)}}
 .deliver{max-width:920px;margin:0;display:grid;gap:0;border-top:1px solid var(--line-strong)}
 .deliver > div{display:grid;grid-template-columns:12em minmax(0,1fr);gap:var(--sp-5);padding:var(--sp-4) 0;border-bottom:1px solid var(--line)}
 .deliver dt{font-family:var(--mincho);font-size:var(--fs-lead);letter-spacing:.08em}
@@ -167,13 +168,13 @@ footer small{font-family:var(--en);font-size:var(--fs-label);letter-spacing:.1em
       <a class="back" href="../index.html#usecases"><span class="arr rev" aria-hidden="true"></span>ポートフォリオへ戻る</a>
       <p class="case-label">Use case</p>
       <h1><span class="ph">預かる前の確かめと、</span><span class="ph">その日の報告を、</span><span class="ph">毎回同じ形にする</span></h1>
-      <p class="lead">飼い主さんに答えていただいたカルテから、預かる3日前の確かめと初日のまとめを作り、夜の報告を下書きする使い方です。預かるかを決めるのと、報告を送るのは、預かる人です。</p>
+      <p class="lead">予約の画面の画像を送ると、カレンダーに予定が入り、カルテにある愛犬の情報も一緒に登録される使い方です。夜の報告は、その日の様子を短く伝えるだけで下書きします。預かるかを決めるのと、報告を送るのは、預かる人です。</p>
       <p class="sample">自分の仕事（ペットを預かる仕事）で使っている仕組みをもとにした例です。データは架空の犬のものです。</p>
       <dl class="meta">
         <dt>型</dt><dd>期限を見張って知らせる／下書きする</dd>
         <dt>向いている所</dt><dd>ペットホテル・一時預かり・シッターなど、1件ごとに「預かる前に確かめること」と「預けた方への報告」がある仕事</dd>
-        <dt>使う道具</dt><dd>入力フォーム／表計算ソフト／カレンダー／確かめのプログラム／AI（例：Claude）</dd>
-        <dt>人がすること</dt><dd>予約の日付を伝える・その日のメモを書く・報告を読んで送る</dd>
+        <dt>使う道具</dt><dd>入力フォーム／表計算ソフト／カレンダー／AI（例：Claude）</dd>
+        <dt>人がすること</dt><dd>予約の画面の画像を送る・その日の様子を伝える・報告を読んで送る</dd>
       </dl>
     </div>
   </section>
@@ -182,8 +183,8 @@ footer small{font-family:var(--en);font-size:var(--fs-label);letter-spacing:.1em
     <div class="wrap">
       <div class="sec-title"><p class="en"><span class="no">01</span>Problem</p><h2>困りごと</h2></div>
       <div class="problem">
-        <p class="voice">「預かる前の夜に、カルテを読み返す。ワクチンの日付を数え直す。夜は、今日の様子を思い出しながら報告を書く。1件ごとに同じことをくり返していて、見落としがないか、いつも少し気になる。」</p>
-        <p class="goal">そこで、日付を数える・カルテを読んでまとめる・報告を下書きする、をプログラムとAIに任せ、人は目の前の子を見ることと、報告を確かめて送ることに集中する形にしました。</p>
+        <p class="voice">「予約のたびに、カレンダーに日付を書き写す。預かる前の夜に、カルテを読み返す。夜は、今日の様子を思い出しながら報告を書く。1件ごとに同じことをくり返していて、見落としがないか、いつも少し気になる。」</p>
+        <p class="goal">そこで、予約をカレンダーに入れる・カルテを読んでまとめる・報告を下書きする、をAIに任せ、人は目の前の子を見ることと、報告を確かめて送ることに集中する形にしました。</p>
       </div>
     </div>
   </section>
@@ -193,16 +194,15 @@ footer small{font-family:var(--en);font-size:var(--fs-label);letter-spacing:.1em
       <div class="sec-title"><p class="en"><span class="no">02</span>Flow</p><h2><span><span class="ph">仕組みの流れと、</span><span class="ph">だれが何をするか</span></span></h2></div>
       <ul class="legend">
         <li><span class="who">人</span>預かる人</li>
-        <li><span class="who pg">プログラム</span>決まった手順で動く部分</li>
         <li><span class="who ai">AI</span>読む・書くを手伝う部分</li>
       </ul>
       <ol class="steps">
-        <li><div><h3>予約が決まったら、名前と日付を伝える</h3><p>「モカちゃん 11/14〜11/16」のように、ひと言伝えるだけです。カルテは、飼い主さんがフォームに答えたものをそのまま使います。</p></div><span class="who">人</span></li>
-        <li><div><h3>日付で決まることを確かめる</h3><p>ワクチンを最後に打った日から1年以内か、ヒートの時期と重ならないか、大事な質問に空欄がないかを確かめます。日がわからないときは「判定できない」と出します。</p></div><span class="who pg">プログラム</span></li>
-        <li><div><h3>カルテを読んで、初日のまとめを作る</h3><p>ご飯・散歩・性格・気をつけること・緊急のときを、スマホで読める長さにまとめます。書いていないことは「未確認」と出し、推測で埋めさせません。</p></div><span class="who ai">AI</span></li>
-        <li><div><h3>カレンダーに入れる</h3><p>3日前に「確かめること」、初日の朝に「まとめ」、泊まる夜に「報告の時刻」が、通知で届くようにします。</p></div><span class="who ai">AI</span></li>
-        <li><div><h3>確かめることを、飼い主さんに聞く</h3><p>3日前の通知を見て、日付や空欄を飼い主さんに聞きます。預かるかどうかを決めるのも、ここです。</p></div><span class="who">人</span></li>
-        <li><div><h3>夜の報告を下書きする</h3><p>その日のメモを渡すと、いつもの形で報告を下書きします。メモにないことは書かせません。飼い主さんが心配していたことには、必ずふれます。</p></div><span class="who ai">AI</span></li>
+        <li><div><h3>予約の画面の画像を送る</h3><p>予約が決まったら、予約の画面を撮った画像を送るだけです。日付や名前を打ち直しません。</p></div><span class="who">人</span></li>
+        <li><div><h3>画像を読んで、カレンダーに予定を入れる</h3><p>画像から、愛犬の名前と預かりの日時を読み取って、カレンダーに予定を入れます。</p></div><span class="who ai">AI</span></li>
+        <li><div><h3>カルテから愛犬の情報を集めて、一緒に登録する</h3><p>飼い主さんに答えていただいたカルテから、ご飯・散歩・性格・気をつけること・緊急のときを集めて、予定の中に書いておきます。書いていないことは「未確認」と出し、推測で埋めさせません。</p></div><span class="who ai">AI</span></li>
+        <li><div><h3>通知から開いて、読み返す</h3><p>預かる3日前と初日に、通知から予定を開いて、愛犬の情報を読み返します。気になる所があれば、飼い主さんに聞きます。</p></div><span class="who">人</span></li>
+        <li><div><h3>その日の様子を、短く伝える</h3><p>夜に、「ご飯は完食、散歩は10分」のように、その日の様子を短く伝えます。</p></div><span class="who">人</span></li>
+        <li><div><h3>夜の報告を下書きする</h3><p>伝えた内容から、いつもの形で報告を下書きします。伝えていないことは書かせません。飼い主さんが心配していたことには、必ずふれます。</p></div><span class="who ai">AI</span></li>
         <li><div><h3>読んで、直して、送る</h3><p>下書きを読み、言い回しを直して、預かる人が送ります。</p></div><span class="who">人</span></li>
       </ol>
     </div>
@@ -213,18 +213,7 @@ footer small{font-family:var(--en);font-size:var(--fs-label);letter-spacing:.1em
       <div class="sec-title"><p class="en"><span class="no">03</span>Examples</p><h2><span><span class="ph">実際に</span><span class="ph">動かした結果</span></span></h2></div>
       <div class="exs">
         <div class="ex">
-          <h3><span class="who pg">プログラム</span>日付で決まることを確かめる</h3>
-          <pre class="log">■ 預かる前の確かめ（モカちゃん／11/14〜11/16）
-狂犬病の予防注射: 最後は 2025-11-15。預かりの途中（11/15）で1年になる → 飼い主さんに確認
-混合ワクチン: 最後は 2026-04-10。最終日（11/16）の時点で1年以内
-ヒート: 最後の時期が「2026年6月ごろ」で、日がわからない → 判定できない。飼い主さんに確認
-大事な質問で空欄のもの: 食べムラがあるとき、食べないときにどうしているか
-持ってきていただくもの: フード（日数分＋1日分）・おやつ・クレート・いつもの毛布
-AIに渡さない行: 4つ（飼い主様氏名・飼い主様の電話番号・緊急連絡先の電話番号・住所）</pre>
-          <p>架空のカルテと、預かりの日付（11/14〜11/16）を、プログラムが突き合わせた結果です。この回は、預かりの途中で狂犬病の予防注射から1年になること、ヒートの時期が月までしかわからないこと、大事な質問の空欄が1つあることが見つかりました。飼い主さんに聞くか・預かるかを決めるのは、預かる人です。</p>
-        </div>
-        <div class="ex">
-          <h3><span class="who ai">AI</span>カルテを読んで、初日のまとめを作る</h3>
+          <h3><span class="who ai">AI</span>カルテから愛犬の情報を集めて、まとめを作る</h3>
           <pre class="log"><b>モカちゃん（トイ・プードル／女の子／2023-03-12生まれ／3.8kg）</b>
 
 <b>ご飯</b>
@@ -266,13 +255,13 @@ AIに渡さない行: 4つ（飼い主様氏名・飼い主様の電話番号・
 
 <b>未確認</b>
 ・食べムラで食べないときに、どうしているか（空欄）</pre>
-          <p>架空のカルテと聞き取りを渡して頼んだ出力です。空欄だった「食べないときの対応」は、それらしい答えで埋めずに「未確認」に入りました。頼んでいない1行目（名前・犬種・体重）が足され、予防注射の記録と持ち物は、入る見出しがないので外されていました。預かる人が読んで、要る行を足します。飼い主さんの氏名・電話番号・住所は、AIに渡す前にプログラムが外しているので、まとめにも入りません。</p>
+          <p>架空のカルテと聞き取りを渡して頼んだ出力です。空欄だった「食べないときの対応」は、それらしい答えで埋めずに「未確認」に入りました。頼んでいない1行目（名前・犬種・体重）が足され、予防注射の記録と持ち物は、入る見出しがないので外されていました。預かる人が読んで、要る行を足します。貼りつけたデータには、飼い主さんの氏名・電話番号・住所の行を入れていません。</p>
           <div class="prompt"><p class="cap">AIへの頼み方（プロンプト）の全文</p><pre>ペットを預かる仕事をしています。下は、飼い主さんに答えていただいたカルテと、聞き取りの答えです。
 預かりの初日に読む「まとめ」を作ってください。
 ・見出しは「ご飯／おやつ／トイレ／散歩／性格／気をつけること／緊急のとき／飼い主さんが心配していること／未確認」の順にしてください。
 ・スマホで読むので、1つの見出しは1〜3行までにしてください。
 ・書いてあることだけを使ってください。体のこと・性格のことを、推測で足さないでください。
-・空欄の所は、それらしい答えで埋めずに「未確認」と書いてください。</pre><details><summary>このあとに貼りつけたカルテと聞き取り（プログラムが氏名・電話番号・住所を外したもの）を開く</summary><pre>【カルテ】
+・空欄の所は、それらしい答えで埋めずに「未確認」と書いてください。</pre><details><summary>このあとに貼りつけたカルテと聞き取り（飼い主さんの氏名・電話番号・住所の行は入れていません）を開く</summary><pre>【カルテ】
 お名前: モカ
 愛称: モカちゃん
 犬種: トイ・プードル
@@ -348,17 +337,16 @@ AIに渡さない行: 4つ（飼い主様氏名・飼い主様の電話番号・
 ・21時 クレートで寝た。今のところ吠えていない</pre></details></div>
         </div>
       </div>
-      <p class="note">架空の犬のデータで動かした結果です（2026年10月）。AIの2つは、Anthropic のAI「Claude」に、上のプロンプトとデータをそのまま送って返ってきた文です（1つの会話の中で順に送っています）。画面の画像ではなく文で載せ、前後の説明の文は省いています。</p>
+      <p class="note">架空の犬のデータで動かした結果です（2026年10月）。2つとも、Anthropic のAI「Claude」に、上のプロンプトとデータをそのまま送って返ってきた文です（1つの会話の中で順に送っています）。画面の画像ではなく文で載せ、前後の説明の文は省いています。予約の画像からカレンダーに入れる所は、ここには載せていません。</p>
     </div>
   </section>
 
   <section class="block">
     <div class="wrap">
       <div class="sec-title"><p class="en"><span class="no">04</span>Roles</p><h2><span><span class="ph">任せること、</span><span class="ph">任せないこと</span></span></h2></div>
-      <div class="cols">
-        <div><h3><span class="who ai">AI</span>読んでまとめる・書く</h3><ul><li>カルテと聞き取りを読んで、まとめを作る</li><li>カレンダーに入れる文を作る</li><li>その日のメモから、報告を下書きする</li></ul><p class="why">話し言葉や長い答えのままでも読めて、決まった形にそろえて書けるためです。</p></div>
-        <div><h3><span class="who pg">プログラム</span>数える・確かめる</h3><ul><li>ワクチンの日付を数える</li><li>ヒートの時期と重なるか確かめる</li><li>大事な質問の空欄を拾う</li><li>AIに渡さない行を外す</li></ul><p class="why">まちがえてはいけない所です。毎回、同じ答えになる方法で確かめます。</p></div>
-        <div><h3><span class="who">人</span>決める・送る</h3><ul><li>預かるかどうかを決める</li><li>確かめることを、飼い主さんに聞く</li><li>報告を読んで、直して、送る</li></ul><p class="why">体のことを判断するのと、飼い主さんとやりとりするのは、預かる人です。AIには決めさせません。</p></div>
+      <div class="cols two">
+        <div><h3><span class="who ai">AI</span>読む・まとめる・書く</h3><ul><li>予約の画像を読んで、カレンダーに入れる</li><li>カルテから愛犬の情報を集めて、まとめる</li><li>その日の様子から、報告を下書きする</li></ul><p class="why">画像や、話し言葉のままの答えでも読めて、決まった形にそろえて書けるためです。</p></div>
+        <div><h3><span class="who">人</span>決める・送る</h3><ul><li>預かるかどうかを決める</li><li>気になる所を、飼い主さんに聞く</li><li>報告を読んで、直して、送る</li></ul><p class="why">体のことを判断するのと、飼い主さんとやりとりするのは、預かる人です。AIには決めさせません。</p></div>
       </div>
     </div>
   </section>
@@ -367,10 +355,10 @@ AIに渡さない行: 4つ（飼い主様氏名・飼い主様の電話番号・
     <div class="wrap">
       <div class="sec-title"><p class="en"><span class="no">05</span>Tools &amp; Data</p><h2><span><span class="ph">使う道具と、</span><span class="ph">データの扱い</span></span></h2></div>
       <dl class="deliver">
-        <div><dt>使う道具</dt><dd>入力フォーム、表計算ソフト、カレンダー、確かめのプログラム、AI（例：Claude）を使います。今お使いのカルテや報告の形があれば、それに合わせます。</dd></div>
-        <div><dt>扱うもの</dt><dd>飼い主さんに答えていただいたカルテ（犬の情報）、聞き取りの答え、その日のメモです。</dd></div>
+        <div><dt>使う道具</dt><dd>入力フォーム、表計算ソフト、カレンダー、AI（例：Claude）を使います。今お使いのカルテや報告の形があれば、それに合わせます。</dd></div>
+        <div><dt>扱うもの</dt><dd>予約の画面の画像、飼い主さんに答えていただいたカルテ（犬の情報）、聞き取りの答え、その日の様子のメモです。</dd></div>
         <div><dt>扱わないもの</dt><dd>体調の判断や診断はしません。カルテに書いていないことを、推測で足しません。報告を自動で送ることもしません。</dd></div>
-        <div><dt>AIに渡す範囲</dt><dd>飼い主さんの氏名・電話番号・住所は、AIに渡す前にプログラムが外します。カレンダーの予定にも書きません。送った内容が学習に使われない設定・契約のAIを使います。</dd></div>
+        <div><dt>AIに渡す範囲</dt><dd>AIには、予約の画像とカルテを読ませます。飼い主さんの電話番号・住所は、まとめにもカレンダーの予定にも書きません。送った内容が学習に使われない設定・契約のAIを使います。</dd></div>
       </dl>
     </div>
   </section>
@@ -380,8 +368,8 @@ AIに渡さない行: 4つ（飼い主様氏名・飼い主様の電話番号・
       <div class="sec-title"><p class="en"><span class="no">06</span>How to start</p><h2>進め方</h2></div>
       <dl class="deliver">
         <div><dt>1. お聞きする</dt><dd>今のカルテの項目と、報告の形、預かる前にいつも確かめていることをお聞きします。</dd></div>
-        <div><dt>2. 1件でお試し</dt><dd>次の預かり1件で、3日前の確かめ・初日のまとめ・夜の報告を使っていただきます。</dd></div>
-        <div><dt>3. 様子を比べる</dt><dd>預かる前の読み返しと報告にかかる時間、飼い主さんに聞きもれていたことの数を、入れる前と後で比べます。</dd></div>
+        <div><dt>2. 1件でお試し</dt><dd>次の預かり1件で、カレンダーへの登録・初日のまとめ・夜の報告を使っていただきます。</dd></div>
+        <div><dt>3. 様子を比べる</dt><dd>予約の書き写し・預かる前の読み返し・報告にかかる時間を、入れる前と後で比べます。</dd></div>
         <div><dt>4. 広げるか決める</dt><dd>合っていれば、ほかの預かりにも広げます。合わなければ、元のやり方に戻せます。</dd></div>
       </dl>
     </div>
