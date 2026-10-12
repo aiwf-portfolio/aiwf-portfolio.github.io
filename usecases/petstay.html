@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>預かる前の確かめと、その日の報告を、毎回同じ形にする | AI Workflow Portfolio</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<style>
+/* 書体: assets/ に使う文字だけを切り出したもの（外への通信なし）。太さの範囲を広げて、ない太さを無理に太らせないようにしている */
+@font-face{font-family:"Zen Kaku Gothic New";src:url("../assets/zenkaku-regular.woff2") format("woff2");font-weight:400 500;font-display:swap}
+@font-face{font-family:"Zen Kaku Gothic New";src:url("../assets/zenkaku-bold.woff2") format("woff2");font-weight:600 700;font-display:swap}
+@font-face{font-family:"Shippori Mincho";src:url("../assets/shippori-medium.woff2") format("woff2");font-weight:400 700;font-display:swap}
+@font-face{font-family:"Cormorant Garamond";src:url("../assets/cormorant.woff2") format("woff2");font-weight:300 700;font-style:normal;font-display:swap}
+@font-face{font-family:"Cormorant Garamond";src:url("../assets/cormorant-italic.woff2") format("woff2");font-weight:300 700;font-style:italic;font-display:swap}
+:root{
+  --bg:#FAF7F3;--bg-2:#F2ECE5;--surface:#FFFFFF;
+  --ink:#3B3230;--ink-2:#5E524D;--ink-3:#74675F;
+  --line:#E4DAD2;--line-strong:#948072;--gold:#B89A6E;--gold-ink:#82663D;
+  --primary:#7E6357;--primary-ink:#FFFFFF;--rose:#96594F;
+  --deep-2:#3E322D;--on-deep:#F6EFE9;--deep-accent:#D9BFA9;
+  --mincho:"Shippori Mincho","Yu Mincho","YuMincho","Hiragino Mincho ProN",serif;
+  --sans:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
+  --en:"Cormorant Garamond","Times New Roman",serif;
+  --fs-display:clamp(28px,3.6vw,44px);--fs-en:clamp(34px,4.4vw,52px);--fs-h2:clamp(22px,2.4vw,28px);
+  --fs-h3:19px;--fs-lead:17px;--fs-body:16px;--fs-label:15px;--fs-num:20px;--fs-ui:14px;
+  --sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:24px;--sp-6:32px;--sp-7:48px;--sp-8:72px;
+  --sp-section:clamp(72px,9vw,120px);
+  --radius:2px;--radius-pill:999px;--max:1080px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1E1916;--bg-2:#26201C;--surface:#2A231F;--ink:#F0E7E0;--ink-2:#CDBFB5;--ink-3:#AE9F95;
+    --line:#3D332E;--line-strong:#86766B;--gold:#A88D66;--gold-ink:#D2B68A;--primary:#D8BCAB;--primary-ink:#1E1916;
+    --rose:#E3AEA4;--deep-2:#100D0B;--on-deep:#F0E7E0;--deep-accent:#D9BFA9;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1E1916;--bg-2:#26201C;--surface:#2A231F;--ink:#F0E7E0;--ink-2:#CDBFB5;--ink-3:#AE9F95;
+  --line:#3D332E;--line-strong:#86766B;--gold:#A88D66;--gold-ink:#D2B68A;--primary:#D8BCAB;--primary-ink:#1E1916;
+  --rose:#E3AEA4;--deep-2:#100D0B;--on-deep:#F0E7E0;--deep-accent:#D9BFA9;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:var(--fs-body);line-height:1.85;letter-spacing:.05em;font-variant-numeric:lining-nums;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+a:focus-visible{outline:2px solid var(--rose);outline-offset:4px}
+footer a:focus-visible{outline-color:var(--deep-accent)}
+p,dd,li,td{text-wrap:pretty}
+.wrap{max-width:var(--max);margin:0 auto;padding-inline:clamp(16px,5vw,56px)}
+h1,h2,h3,.mincho{font-family:var(--mincho);font-weight:500;line-height:1.5;letter-spacing:.08em;font-feature-settings:"palt";text-wrap:balance;word-break:auto-phrase;margin:0}
+.ph{display:inline-block}
+.arr{position:relative;display:inline-block;flex:none;width:28px;height:1px;background:currentColor}
+.arr::after{content:"";position:absolute;right:0;top:0;width:8px;height:1px;background:currentColor;transform:rotate(35deg);transform-origin:right center}
+.arr.rev{transform:scaleX(-1)}
+.back{display:inline-flex;align-items:center;gap:var(--sp-3);min-height:44px;color:var(--ink-2);font-size:var(--fs-ui);font-weight:500;letter-spacing:.12em;border-bottom:1px solid var(--line-strong);transition:color .2s,border-color .2s}
+.back:hover{color:var(--rose);border-color:var(--rose)}
+.note{margin:var(--sp-5) 0 0;font-size:var(--fs-ui);color:var(--ink-3)}
+
+/* header */
+.site-head{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
+.site-head .wrap{display:flex;align-items:center;height:80px}
+.logo{display:flex;align-items:center;gap:var(--sp-3);min-height:44px;white-space:nowrap;font-family:var(--en);font-weight:600;font-size:21px;letter-spacing:.06em;line-height:1.2}
+.logo svg{flex:none;width:26px;height:32px}
+.logo .m-arch{fill:none;stroke:var(--gold-ink);stroke-width:1.3}
+.logo .m-a{font-family:var(--en);font-style:italic;font-weight:600;font-size:17px;fill:var(--rose)}
+.logo small{margin-left:var(--sp-2);font-style:italic;font-weight:500;font-size:var(--fs-lead);color:var(--rose);letter-spacing:.08em}
+@media (max-width:900px){.site-head .wrap{height:64px}.logo{font-size:18px}}
+@media (max-width:480px){.site-head .logo{gap:var(--sp-2);font-size:16px;letter-spacing:.02em}.logo small{font-size:var(--fs-ui)}}
+@media (max-width:359px){.site-head .logo{white-space:normal}}
+
+/* intro */
+.intro{padding-block:clamp(40px,6vw,80px) clamp(56px,7vw,88px)}
+.case-label{display:flex;align-items:center;gap:var(--sp-4);margin:var(--sp-7) 0 0;font-family:var(--en);font-style:italic;font-size:var(--fs-num);letter-spacing:.08em;color:var(--rose)}
+.case-label::after{content:"";width:48px;height:1px;background:var(--gold)}
+.intro h1{margin-top:var(--sp-4);font-size:var(--fs-display);line-height:1.5;letter-spacing:.1em}
+.intro .lead{margin:var(--sp-5) 0 0;max-width:40em;color:var(--ink-2)}
+.sample{display:inline-block;margin:var(--sp-5) 0 0;padding:var(--sp-2) var(--sp-4);border:1px solid var(--gold);border-radius:var(--radius);font-size:var(--fs-ui);color:var(--gold-ink);letter-spacing:.08em}
+.meta{max-width:920px;margin:var(--sp-7) 0 0;display:grid;grid-template-columns:auto 1fr;font-size:var(--fs-ui);border-top:1px solid var(--line)}
+.meta dt,.meta dd{padding:var(--sp-3) 0;border-bottom:1px solid var(--line)}
+.meta dt{padding-right:var(--sp-6);color:var(--ink-3);white-space:nowrap}
+.meta dd{margin:0;font-size:var(--fs-body);max-width:38em}
+
+/* sections */
+section.block{padding-block:var(--sp-section)}
+section.alt{background:var(--bg-2)}
+.sec-title{margin-bottom:var(--sp-7)}
+.sec-title .en{margin:0;display:flex;align-items:baseline;gap:var(--sp-4);font-family:var(--en);font-size:var(--fs-en);font-weight:500;line-height:1.3;letter-spacing:.03em}
+.sec-title .en .no{font-size:var(--fs-num);font-style:italic;color:var(--rose);letter-spacing:.06em}
+.sec-title h2{display:flex;align-items:center;gap:var(--sp-4);margin-top:var(--sp-2);font-size:var(--fs-h2)}
+.sec-title h2::before{content:"";flex:none;width:32px;height:1px;background:var(--gold)}
+.problem{max-width:40em}
+.problem .voice{margin:0 0 var(--sp-6);padding:var(--sp-2) 0 var(--sp-2) var(--sp-5);border-left:1px solid var(--gold);font-family:var(--mincho);font-size:var(--fs-lead);line-height:1.9;letter-spacing:.06em}
+.problem p.goal{margin:0;font-weight:700}
+
+/* 担当の札 */
+.who{display:inline-flex;align-items:center;justify-content:center;min-width:104px;padding:var(--sp-1) var(--sp-3);border:1px solid var(--line-strong);border-radius:var(--radius-pill);font-size:var(--fs-ui);letter-spacing:.08em;color:var(--ink-2);white-space:nowrap}
+.who.ai{border-color:var(--rose);background:var(--rose);color:var(--primary-ink)}
+.who.pg{border-color:var(--primary);color:var(--primary)}
+.legend{display:flex;flex-wrap:wrap;gap:var(--sp-4) var(--sp-5);margin:0 0 var(--sp-6);padding:0;list-style:none;font-size:var(--fs-ui);color:var(--ink-2)}
+.legend li{display:flex;align-items:center;gap:var(--sp-3)}
+
+/* 流れ */
+.steps{margin:0;padding:0;list-style:none;counter-reset:s;border-top:1px solid var(--line-strong);max-width:920px}
+.steps li{display:grid;grid-template-columns:40px minmax(0,1fr) auto;align-items:start;gap:var(--sp-4);padding:var(--sp-5) 0;border-bottom:1px solid var(--line);counter-increment:s}
+.steps li::before{content:counter(s);font-family:var(--en);font-style:italic;font-size:var(--fs-en);line-height:1;color:var(--gold-ink)}
+.steps h3{font-size:var(--fs-h3)}
+.steps p{margin:var(--sp-2) 0 0;color:var(--ink-2)}
+@media (max-width:640px){.steps li{grid-template-columns:32px minmax(0,1fr)}.steps .who{grid-column:2;justify-self:start}}
+
+/* 例 */
+.exs{display:grid;gap:var(--sp-7);max-width:920px}
+.ex h3{font-size:var(--fs-h3);display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-3)}
+
+/* 実際の画面・実際の出力 */
+.shot{margin:var(--sp-4) 0 0}
+.shot img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:var(--radius)}
+.log b{font-weight:700}
+.log{margin:var(--sp-4) 0 0;padding:var(--sp-5);background:var(--surface);border:1px solid var(--primary);border-radius:var(--radius);font:inherit;font-size:var(--fs-ui);line-height:1.9;white-space:pre-wrap;color:var(--ink)}
+.ex > p{margin:var(--sp-3) 0 0;color:var(--ink-2)}
+
+/* AIへの頼み方（プロンプト）の全文 */
+.prompt{margin:var(--sp-4) 0 0;padding:var(--sp-5);background:var(--surface);border:1px solid var(--line);border-radius:var(--radius)}
+.prompt .cap{margin:0 0 var(--sp-3);font-size:var(--fs-ui);color:var(--ink-3);letter-spacing:.1em}
+.prompt pre{margin:0;font:inherit;line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere}
+.prompt details{margin-top:var(--sp-4);border-top:1px solid var(--line)}
+.prompt summary{display:flex;align-items:center;min-height:44px;cursor:pointer;color:var(--primary);font-size:var(--fs-ui);font-weight:500;letter-spacing:.08em}
+.prompt summary:hover{color:var(--rose)}
+.prompt summary:focus-visible{outline:2px solid var(--rose);outline-offset:4px}
+.prompt details pre{padding-top:var(--sp-2);font-size:var(--fs-ui)}
+
+/* 分担・道具・データ */
+.cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-6);max-width:920px}
+.cols > div{padding-top:var(--sp-4);border-top:1px solid var(--line-strong)}
+.cols h3{font-size:var(--fs-h3);display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-3)}
+.cols ul{margin:var(--sp-3) 0 0;padding:0;list-style:none}
+.cols li{padding:var(--sp-2) 0;border-bottom:1px solid var(--line);color:var(--ink-2)}
+.cols .why{margin:var(--sp-3) 0 0;font-size:var(--fs-ui);color:var(--ink-3)}
+@media (max-width:760px){.cols{grid-template-columns:1fr;gap:var(--sp-5)}}
+.deliver{max-width:920px;margin:0;display:grid;gap:0;border-top:1px solid var(--line-strong)}
+.deliver > div{display:grid;grid-template-columns:12em minmax(0,1fr);gap:var(--sp-5);padding:var(--sp-4) 0;border-bottom:1px solid var(--line)}
+.deliver dt{font-family:var(--mincho);font-size:var(--fs-lead);letter-spacing:.08em}
+.deliver dd{margin:0;color:var(--ink-2)}
+@media (max-width:640px){.deliver > div{grid-template-columns:1fr;gap:var(--sp-1)}}
+.foot-back{padding-block:var(--sp-7) var(--sp-8)}
+
+footer{background:var(--deep-2);color:var(--on-deep)}
+footer .wrap{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:var(--sp-4);padding-block:var(--sp-7) var(--sp-6)}
+footer .logo .m-arch{stroke:var(--deep-accent)}
+footer .logo .m-a{fill:var(--deep-accent)}
+footer small{font-family:var(--en);font-size:var(--fs-label);letter-spacing:.1em}
+
+</style>
+</head>
+<body>
+<header class="site-head">
+  <div class="wrap">
+    <a class="logo" href="../index.html#usecases"><svg viewBox="0 0 26 32" aria-hidden="true"><path class="m-arch" d="M1.5 31.5V13.5a11.5 11.5 0 0 1 23 0v18"/><text class="m-a" x="13" y="25.5" text-anchor="middle">A</text></svg>AI Workflow &amp; Content<small>Portfolio</small></a>
+  </div>
+</header>
+
+<main>
+  <section class="intro">
+    <div class="wrap">
+      <a class="back" href="../index.html#usecases"><span class="arr rev" aria-hidden="true"></span>ポートフォリオへ戻る</a>
+      <p class="case-label">Use case</p>
+      <h1><span class="ph">預かる前の確かめと、</span><span class="ph">その日の報告を、</span><span class="ph">毎回同じ形にする</span></h1>
+      <p class="lead">飼い主さんに答えていただいたカルテから、預かる3日前の確かめと初日のまとめを作り、夜の報告を下書きする使い方です。預かるかを決めるのと、報告を送るのは、預かる人です。</p>
+      <p class="sample">自分の仕事（ペットを預かる仕事）で使っている仕組みをもとにした例です。データは架空の犬のものです。</p>
+      <dl class="meta">
+        <dt>型</dt><dd>期限を見張って知らせる／下書きする</dd>
+        <dt>向いている所</dt><dd>ペットホテル・一時預かり・シッターなど、1件ごとに「預かる前に確かめること」と「預けた方への報告」がある仕事</dd>
+        <dt>使う道具</dt><dd>入力フォーム／表計算ソフト／カレンダー／確かめのプログラム／AI（例：Claude）</dd>
+        <dt>人がすること</dt><dd>予約の日付を伝える・その日のメモを書く・報告を読んで送る</dd>
+      </dl>
+    </div>
+  </section>
+
+  <section class="block alt">
+    <div class="wrap">
+      <div class="sec-title"><p class="en"><span class="no">01</span>Problem</p><h2>困りごと</h2></div>
+      <div class="problem">
+        <p class="voice">「預かる前の夜に、カルテを読み返す。ワクチンの日付を数え直す。夜は、今日の様子を思い出しながら報告を書く。1件ごとに同じことをくり返していて、見落としがないか、いつも少し気になる。」</p>
+        <p class="goal">そこで、日付を数える・カルテを読んでまとめる・報告を下書きする、をプログラムとAIに任せ、人は目の前の子を見ることと、報告を確かめて送ることに集中する形にしました。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="sec-title"><p class="en"><span class="no">02</span>Flow</p><h2><span><span class="ph">仕組みの流れと、</span><span class="ph">だれが何をするか</span></span></h2></div>
+      <ul class="legend">
+        <li><span class="who">人</span>預かる人</li>
+        <li><span class="who pg">プログラム</span>決まった手順で動く部分</li>
+        <li><span class="who ai">AI</span>読む・書くを手伝う部分</li>
+      </ul>
+      <ol class="steps">
+        <li><div><h3>予約が決まったら、名前と日付を伝える</h3><p>「モカちゃん 11/14〜11/16」のように、ひと言伝えるだけです。カルテは、飼い主さんがフォームに答えたものをそのまま使います。</p></div><span class="who">人</span></li>
+        <li><div><h3>日付で決まることを確かめる</h3><p>ワクチンを最後に打った日から1年以内か、ヒートの時期と重ならないか、大事な質問に空欄がないかを確かめます。日がわからないときは「判定できない」と出します。</p></div><span class="who pg">プログラム</span></li>
+        <li><div><h3>カルテを読んで、初日のまとめを作る</h3><p>ご飯・散歩・性格・気をつけること・緊急のときを、スマホで読める長さにまとめます。書いていないことは「未確認」と出し、推測で埋めさせません。</p></div><span class="who ai">AI</span></li>
+        <li><div><h3>カレンダーに入れる</h3><p>3日前に「確かめること」、初日の朝に「まとめ」、泊まる夜に「報告の時刻」が、通知で届くようにします。</p></div><span class="who ai">AI</span></li>
+        <li><div><h3>確かめることを、飼い主さんに聞く</h3><p>3日前の通知を見て、日付や空欄を飼い主さんに聞きます。預かるかどうかを決めるのも、ここです。</p></div><span class="who">人</span></li>
+        <li><div><h3>夜の報告を下書きする</h3><p>その日のメモを渡すと、いつもの形で報告を下書きします。メモにないことは書かせません。飼い主さんが心配していたことには、必ずふれます。</p></div><span class="who ai">AI</span></li>
+        <li><div><h3>読んで、直して、送る</h3><p>下書きを読み、言い回しを直して、預かる人が送ります。</p></div><span class="who">人</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="block alt">
+    <div class="wrap">
+      <div class="sec-title"><p class="en"><span class="no">03</span>Examples</p><h2><span><span class="ph">実際に</span><span class="ph">動かした結果</span></span></h2></div>
+      <div class="exs">
+        <div class="ex">
+          <h3><span class="who pg">プログラム</span>日付で決まることを確かめる</h3>
+          <pre class="log">■ 預かる前の確かめ（モカちゃん／11/14〜11/16）
+狂犬病の予防注射: 最後は 2025-11-15。預かりの途中（11/15）で1年になる → 飼い主さんに確認
+混合ワクチン: 最後は 2026-04-10。最終日（11/16）の時点で1年以内
+ヒート: 最後の時期が「2026年6月ごろ」で、日がわからない → 判定できない。飼い主さんに確認
+大事な質問で空欄のもの: 食べムラがあるとき、食べないときにどうしているか
+持ってきていただくもの: フード（日数分＋1日分）・おやつ・クレート・いつもの毛布
+AIに渡さない行: 4つ（飼い主様氏名・飼い主様の電話番号・緊急連絡先の電話番号・住所）</pre>
+          <p>架空のカルテと、預かりの日付（11/14〜11/16）を、プログラムが突き合わせた結果です。この回は、預かりの途中で狂犬病の予防注射から1年になること、ヒートの時期が月までしかわからないこと、大事な質問の空欄が1つあることが見つかりました。飼い主さんに聞くか・預かるかを決めるのは、預かる人です。</p>
+        </div>
+        <div class="ex">
+          <h3><span class="who ai">AI</span>カルテを読んで、初日のまとめを作る</h3>
+          <pre class="log"><b>モカちゃん（トイ・プードル／女の子／2023-03-12生まれ／3.8kg）</b>
+
+<b>ご飯</b>
+・ドライフード40gを1日2回（7時ごろ・18時ごろ）
+・ぬるま湯で5分ふやかす。トッピングはしない
+・場所が変わると食べないことがある
+
+<b>おやつ</b>
+・持参の魚のジャーキーだけ。1日2本まで
+・預かり先のご飯・おやつはあげない
+・魚の味が好き
+
+<b>トイレ</b>
+・室内のシートでできる。散歩中はしないことが多い
+・慣れない場所では、はじめに失敗することがある
+
+<b>散歩</b>
+・1日2回、20分ずつ（朝・夕）
+・ほかの犬が苦手。すれ違うときは距離をとる
+・拾い食いに注意
+
+<b>性格</b>
+・人が好きで甘えん坊
+・大きな音（掃除機・インターホン）が苦手
+・お昼寝が長め。ひとりで休む時間もほしい。夜はクレートで寝る
+
+<b>気をつけること</b>
+・鶏肉はあげない（食べると皮膚が赤くなる）
+・朝ご飯は8時までに（遅いと黄色い液を吐くことがある）
+・避妊していない。最後のヒートは2026年6月ごろ、間隔は約7か月
+
+<b>緊急のとき</b>
+・かかりつけ：みほん動物病院（架空）。薬・持病はなし
+・搬送に同意あり。上限は5万円
+・車はクレートに入れば乗れる
+
+<b>飼い主さんが心配していること</b>
+・夜に吠えてしまうかもしれない
+
+<b>未確認</b>
+・食べムラで食べないときに、どうしているか（空欄）</pre>
+          <p>架空のカルテと聞き取りを渡して頼んだ出力です。空欄だった「食べないときの対応」は、それらしい答えで埋めずに「未確認」に入りました。頼んでいない1行目（名前・犬種・体重）が足され、予防注射の記録と持ち物は、入る見出しがないので外されていました。預かる人が読んで、要る行を足します。飼い主さんの氏名・電話番号・住所は、AIに渡す前にプログラムが外しているので、まとめにも入りません。</p>
+          <div class="prompt"><p class="cap">AIへの頼み方（プロンプト）の全文</p><pre>ペットを預かる仕事をしています。下は、飼い主さんに答えていただいたカルテと、聞き取りの答えです。
+預かりの初日に読む「まとめ」を作ってください。
+・見出しは「ご飯／おやつ／トイレ／散歩／性格／気をつけること／緊急のとき／飼い主さんが心配していること／未確認」の順にしてください。
+・スマホで読むので、1つの見出しは1〜3行までにしてください。
+・書いてあることだけを使ってください。体のこと・性格のことを、推測で足さないでください。
+・空欄の所は、それらしい答えで埋めずに「未確認」と書いてください。</pre><details><summary>このあとに貼りつけたカルテと聞き取り（プログラムが氏名・電話番号・住所を外したもの）を開く</summary><pre>【カルテ】
+お名前: モカ
+愛称: モカちゃん
+犬種: トイ・プードル
+性別: 女の子
+避妊去勢: していない
+ヒート間隔: 約7か月
+最後のヒート時期: 2026年6月ごろ
+生年月日: 2023-03-12
+体重: 3.8kg
+性格: 人が好きで甘えん坊。大きな音（掃除機・インターホン）が苦手
+服用中の薬: なし
+アレルギー・副作用: 鶏肉を食べると皮膚が赤くなる
+かかりつけ動物病院: みほん動物病院（架空）
+フィラリア予防: している
+ノミダニ予防: している
+狂犬病予防接種の最終接種日: 2025-11-15
+混合ワクチンの最終接種日: 2026-04-10
+病歴・持病: なし
+日中の過ごし方の要望: お昼寝が長め。ひとりで休む時間もほしい
+緊急時の搬送に同意: はい
+搬送の上限金額: 5万円
+緊急時に車に乗れるか: 乗れる（クレートに入れば）
+クレートに入っていられるか: できる（夜はクレートで寝る）
+
+【聞き取り】
+［ご飯］ご飯・おやつの好き嫌い: 鶏肉はアレルギーのためあげない。魚の味が好き
+［ご飯］普段から食べムラがあるか: ときどきある（場所が変わると食べないことがある）
+［ご飯］食べムラがあるとき、食べないときにどうしているか: （空欄）
+［ご飯］ご飯の1回量・回数・時間: ドライフード40g・1日2回（7時ごろ・18時ごろ）
+［ご飯］ご飯のあげ方: ぬるま湯で5分ふやかす。トッピングはしない
+［ご飯］空腹で吐くことがあるか: 朝が遅いと黄色い液を吐くことがある（8時までにあげる）
+［おやつ］おやつの種類: 持参の魚のジャーキーだけ。1日2本まで
+［おやつ］預かり先のご飯やおやつをあげてよいか: あげないでほしい
+［トイレ］室内・室外ともにできるか: 室内のシートでできる。散歩中はしないことが多い
+［トイレ］失敗することがあるか: 慣れない場所では、はじめに失敗することがある
+［散歩］回数・時間: 1日2回・20分ずつ（朝・夕）
+［散歩］気をつけること: ほかの犬が苦手。すれ違うときは距離をとる。拾い食いに注意
+［お留守番］飼い主様が心配していること: 夜に吠えてしまうかもしれない
+［持ち物］持ってきていただくもの: フード（日数分＋1日分）・おやつ・クレート・いつもの毛布</pre></details></div>
+        </div>
+        <div class="ex">
+          <h3><span class="who ai">AI</span>夜の報告を下書きする</h3>
+          <pre class="log">モカちゃん 1日目（11/14）のご報告です。
+
+<b>ごはん</b>
+朝ごはんは、3割くらい残しました。
+夜ごはんは18時にあげて、残さず完食しました。
+
+<b>お散歩</b>
+夕方に20分歩きました。
+ほかの犬とすれ違ったときは、その場で止まりましたが、吠えませんでした。
+
+<b>トイレ</b>
+2回しました。
+1回目はシートの外にしてしまいましたが、2回目はシートでできました。
+
+<b>夜の様子</b>
+21時にクレートで寝ました。
+ご心配されていた夜の吠えは、今のところありません。
+
+メモになかったので書いていないこと：朝ごはんの時間、朝のお散歩、おやつ、トイレの時間と種類、日中の様子（お昼寝など）、21時より後の様子。</pre>
+          <p>1日目の夜に、その日のメモを渡して頼んだ出力です。飼い主さんが心配していた「夜に吠えるかもしれない」に、ふれています。朝のお散歩やおやつなど、メモになかったことは、作らずに最後の1行で返ってきました。あいさつや結びの言葉も、メモにないので入っていません。預かる人が読んで、あいさつを足し、言い回しを直してから送ります。</p>
+          <div class="prompt"><p class="cap">AIへの頼み方（プロンプト）の全文（同じ会話の続き）</p><pre>1日目の夜の報告を、飼い主さんに送る文として下書きしてください。下は、今日のメモです。
+・見出しは「ごはん／お散歩／トイレ／夜の様子」の順にしてください。
+・メモにないことは書かないでください。量や回数を作らないでください。
+・カルテの「飼い主様が心配していること」に、1つはふれてください。
+・「食べました」だけでなく、様子がわかる書き方にしてください。
+・最後に、メモになかったので書いていないことを、1行で教えてください。</pre><details><summary>このあとに貼りつけた今日のメモを開く</summary><pre>モカちゃん 1日目（11/14）
+・朝ごはん 3割くらい残した
+・夜ごはん 18時 完食
+・散歩 夕方20分。ほかの犬とすれ違ったとき止まった。吠えなかった
+・トイレ 2回。1回目はシートの外（失敗）、2回目はシートでできた
+・21時 クレートで寝た。今のところ吠えていない</pre></details></div>
+        </div>
+      </div>
+      <p class="note">架空の犬のデータで動かした結果です（2026年10月）。AIの2つは、Anthropic のAI「Claude」に、上のプロンプトとデータをそのまま送って返ってきた文です（1つの会話の中で順に送っています）。画面の画像ではなく文で載せ、前後の説明の文は省いています。</p>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="sec-title"><p class="en"><span class="no">04</span>Roles</p><h2><span><span class="ph">任せること、</span><span class="ph">任せないこと</span></span></h2></div>
+      <div class="cols">
+        <div><h3><span class="who ai">AI</span>読んでまとめる・書く</h3><ul><li>カルテと聞き取りを読んで、まとめを作る</li><li>カレンダーに入れる文を作る</li><li>その日のメモから、報告を下書きする</li></ul><p class="why">話し言葉や長い答えのままでも読めて、決まった形にそろえて書けるためです。</p></div>
+        <div><h3><span class="who pg">プログラム</span>数える・確かめる</h3><ul><li>ワクチンの日付を数える</li><li>ヒートの時期と重なるか確かめる</li><li>大事な質問の空欄を拾う</li><li>AIに渡さない行を外す</li></ul><p class="why">まちがえてはいけない所です。毎回、同じ答えになる方法で確かめます。</p></div>
+        <div><h3><span class="who">人</span>決める・送る</h3><ul><li>預かるかどうかを決める</li><li>確かめることを、飼い主さんに聞く</li><li>報告を読んで、直して、送る</li></ul><p class="why">体のことを判断するのと、飼い主さんとやりとりするのは、預かる人です。AIには決めさせません。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block alt">
+    <div class="wrap">
+      <div class="sec-title"><p class="en"><span class="no">05</span>Tools &amp; Data</p><h2><span><span class="ph">使う道具と、</span><span class="ph">データの扱い</span></span></h2></div>
+      <dl class="deliver">
+        <div><dt>使う道具</dt><dd>入力フォーム、表計算ソフト、カレンダー、確かめのプログラム、AI（例：Claude）を使います。今お使いのカルテや報告の形があれば、それに合わせます。</dd></div>
+        <div><dt>扱うもの</dt><dd>飼い主さんに答えていただいたカルテ（犬の情報）、聞き取りの答え、その日のメモです。</dd></div>
+        <div><dt>扱わないもの</dt><dd>体調の判断や診断はしません。カルテに書いていないことを、推測で足しません。報告を自動で送ることもしません。</dd></div>
+        <div><dt>AIに渡す範囲</dt><dd>飼い主さんの氏名・電話番号・住所は、AIに渡す前にプログラムが外します。カレンダーの予定にも書きません。送った内容が学習に使われない設定・契約のAIを使います。</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="sec-title"><p class="en"><span class="no">06</span>How to start</p><h2>進め方</h2></div>
+      <dl class="deliver">
+        <div><dt>1. お聞きする</dt><dd>今のカルテの項目と、報告の形、預かる前にいつも確かめていることをお聞きします。</dd></div>
+        <div><dt>2. 1件でお試し</dt><dd>次の預かり1件で、3日前の確かめ・初日のまとめ・夜の報告を使っていただきます。</dd></div>
+        <div><dt>3. 様子を比べる</dt><dd>預かる前の読み返しと報告にかかる時間、飼い主さんに聞きもれていたことの数を、入れる前と後で比べます。</dd></div>
+        <div><dt>4. 広げるか決める</dt><dd>合っていれば、ほかの預かりにも広げます。合わなければ、元のやり方に戻せます。</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <div class="wrap foot-back"><a class="back" href="../index.html#usecases"><span class="arr rev" aria-hidden="true"></span>ポートフォリオへ戻る</a></div>
+</main>
+<footer>
+  <div class="wrap">
+    <a class="logo" href="../index.html#usecases"><svg viewBox="0 0 26 32" aria-hidden="true"><path class="m-arch" d="M1.5 31.5V13.5a11.5 11.5 0 0 1 23 0v18"/><text class="m-a" x="13" y="25.5" text-anchor="middle">A</text></svg>AI Workflow &amp; Content</a>
+    <small>© 2026 AI Workflow &amp; Content　All rights reserved.</small>
+  </div>
+</footer>
+</body>
+</html>
